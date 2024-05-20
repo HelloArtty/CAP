@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Finder Sign Up</title>
+  </head>
+  <body>
+    <h1>Sign Up</h1>
+    <form method="POST" action="/signup">
+      {% csrf_token %} {% for field in form%}
+      <p>{{field.label_tag}} {{field}}</p>
+      {% endfor %}
+
+      <input type="submit" value="Sign Up" />
+    </form>
+
+    {% for user in users%}
+    <p>{{user.name}} {{user.email}} {{user.tel}}</p>
+    {% endfor %}
+    <br />
+    <br />
+    <b>This page From users' app level</b>
+  </body>
+</html>
