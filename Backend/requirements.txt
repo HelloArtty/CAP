@@ -1,0 +1,41 @@
+# Core Django
+Django>=4.0,<5.0
+
+# Django Rest Framework for building APIs
+djangorestframework>=3.12.0,<4.0.0
+
+# Gunicorn for running the application in production
+gunicorn>=20.0.0,<21.0.0
+
+# PostgreSQL database adapter
+psycopg2>=2.9.0,<3.0.0
+
+# MySQL database adapter (if you are using MySQL, otherwise you can remove this)
+mysqlclient>=2.0.0,<3.0.0
+
+# Image processing library
+Pillow>=8.0.0,<10.0.0
+
+# Handling Cross-Origin Resource Sharing (CORS)
+django-cors-headers>=3.7.0,<4.0.0
+
+# Managing environment variables
+django-environ>=0.8.1,<1.0.0
+
+# PyTorch for machine learning tasks
+torch>=1.10.0,<2.0.0  # Adjust the version based on your requirements
+
+# Cloudinary for storing images
+cloudinary >=1.26.0,<2.0.0
+
+# Install yolo5 for object detection
+yolov5>=5.0.0,<6.0.0
+
+# Install bcrypt for password hashing
+bcrypt>=3.2.0,<4.0.0
+
+# Install jwt for token generation
+jwt>=0.0.1,<1.3.1
+
+# Install PyJWT for token generation
+PyJWT>=0.1.1,<2.8.0
