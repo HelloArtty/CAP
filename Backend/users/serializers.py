@@ -22,24 +22,14 @@ class AdminSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class PostSerializer(serializers.ModelSerializer):
-    class Meta:
-        categoryID = CategorySerializer()
-        placeID = PlaceSerializer()
-        adminID = AdminSerializer()
-        model = Post
-        fields = ['postID','title','categoryID','placeID','adminID','itemDetail','placeDetail','image','datePost']
-    
-class PostCategorySerializer(serializers.ModelSerializer):
     categoryID = CategorySerializer()
+    placeID = PlaceSerializer()
+    adminID = AdminSerializer()
     class Meta:
         model = Post
-        fields = ['postID','title','categoryID','placeID','adminID','itemDetail','placeDetail','image','datePost']
-        
-# class UserRequestSerializer(serializers.ModelSerializer):   
-#     class Meta:
-#         model = Request
-#         fields = '__all__'  
-        
+        fields = '__all__'
+
+
 class SignUpSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -55,4 +45,10 @@ class LogInSerializer(serializers.ModelSerializer):
 
         
 
+        
+        
+# class UserRequestSerializer(serializers.ModelSerializer):   
+#     class Meta:
+#         model = Request
+#         fields = '__all__'  
         
