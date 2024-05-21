@@ -23,7 +23,7 @@ django-cors-headers>=3.7.0,<4.0.0
 django-environ>=0.8.1,<1.0.0
 
 # PyTorch for machine learning tasks
-torch>=1.10.0,<2.0.0  # Adjust the version based on your requirements
+torch==1.9.0  # Adjust the version based on your requirements
 
 # Cloudinary for storing images
 cloudinary >=1.26.0,<2.0.0
