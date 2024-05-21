@@ -85,7 +85,7 @@ def posts_by_img(req):
         try:
             # call model -> predict and get category
             categories = callModel.predict(img_path) #pass image path to yolov5 model
-            posts_cate = Post.objects.filter(categoryID=categories.item())
+            posts_cate = Post.objects.select_related('categoryID', 'placeID', 'adminID').filter(categoryID=categories.item())
             
             if posts_cate.count() == 0:
                 return Response("None of the posts found in the Category", status=status.HTTP_404_NOT_FOUND)
