@@ -11,7 +11,6 @@ import environ
 
 env = environ.Env()
 
-
 @api_view(['GET','POST'])
 def login(req):
     if req.method == 'POST':
@@ -35,14 +34,14 @@ def login(req):
                 'iat' : datetime.datetime.now()
             }
             token = jwt.encode(payload, env('jwt_secret') , algorithm='HS256')
-        
+
             response = Response()
-            response.set_cookie(key='token', value=token, httponly=True)
+            response.set_cookie(key='token', value=token, httponly=True,secure=True, samesite='None')
+            return Response(data={'message':'Log in successfully'}, status=status.HTTP_200_OK)
             
         except Exception as error:
             return Response(data={'message': "Python error : "+ str(error) }, status=status.HTTP_400_BAD_REQUEST)
         
-        return Response(data={'message':'Log in successfully'}, status=status.HTTP_200_OK)
     
     return Response(data={'message':'Status not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
