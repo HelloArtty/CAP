@@ -61,7 +61,6 @@ export default function Register() {
         return Swal.fire('Error', 'Password must match the confirm password', 'error');
       }
 
-
       const createNewUser = {
         name: register.name,
         email: register.email,
