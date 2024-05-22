@@ -1,5 +1,5 @@
 from users.models import Post
-from users.serializers import PostSerializer
+from users.serializers import PostJoinSerializer, PostSerializer
 
 from rest_framework.decorators import api_view 
 from rest_framework.response import Response
@@ -15,7 +15,7 @@ def posts_list(req):
     
     if req.method == 'GET':
         posts = Post.objects.select_related('categoryID', 'placeID', 'adminID').all()
-        serializer = PostSerializer(posts, many=True)
+        serializer = PostJoinSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif req.method == 'POST':
         serializer = PostSerializer(data=req.data)
@@ -35,7 +35,7 @@ def post_by_id(req, id):
         return Response("Item ID not found", status=status.HTTP_404_NOT_FOUND)
     
     if req.method == 'GET':
-        serializer = PostSerializer(item)
+        serializer = PostJoinSerializer(item)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     elif req.method == 'PUT':
@@ -53,7 +53,7 @@ def post_by_id(req, id):
         
         # delete item from database
         item.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(data="Item deleted.",status=status.HTTP_204_NO_CONTENT)
     
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -65,7 +65,7 @@ def posts_by_category(req,cate_id):
         return Response("None of the posts found in the Category", status=status.HTTP_404_NOT_FOUND)
     
     if req.method == 'GET':
-        serializer = PostSerializer(posts, many=True)
+        serializer = PostJoinSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -96,7 +96,7 @@ def posts_by_img(req):
         except Exception as error:
                 return Response(data={'message':str(e) for e in error}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = PostSerializer(posts_cate, many=True)
+        serializer = PostJoinSerializer(posts_cate, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
         # return Response({"predictions":predictions.tolist(),"scores":scores.tolist(),"categories":categories.tolist(),"category":pred_class.cateName}) 
         

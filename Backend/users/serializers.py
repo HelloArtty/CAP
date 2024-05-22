@@ -21,7 +21,7 @@ class AdminSerializer(serializers.ModelSerializer):
         model = Admin
         fields = '__all__'
         
-class PostSerializer(serializers.ModelSerializer):
+class PostJoinSerializer(serializers.ModelSerializer):
     categoryID = CategorySerializer()
     placeID = PlaceSerializer()
     adminID = AdminSerializer()
@@ -29,6 +29,10 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = '__all__'
 
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = '__all__'
 
 class SignUpSerializer(serializers.ModelSerializer):
 
