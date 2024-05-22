@@ -18,6 +18,11 @@ def posts_list(req):
         serializer = PostJoinSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif req.method == 'POST':
+        
+        upload_result = cloudinary.uploader.upload(req.FILES['file'])
+        img_path = upload_result['secure_url']
+        req.data['image'] = img_path
+        
         serializer = PostSerializer(data=req.data)
         if serializer.is_valid():
             serializer.save()
