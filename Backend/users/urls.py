@@ -27,4 +27,7 @@ urlpatterns = [
     path('posts/<int:id>', post_by_id),
     path('posts-category/<int:cate_id>', posts_by_category),
     path('posts-img', posts_by_img),
+    
+    # search
+    path('search-posts/<str:search_title>', search_posts),
 ]

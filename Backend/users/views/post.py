@@ -16,7 +16,7 @@ def posts_list(req):
     if req.method == 'GET':
         posts = Post.objects.select_related('categoryID', 'placeID', 'adminID').all()
         serializer = PostSerializer(posts, many=True)
-        return Response({"posts":serializer.data})
+        return Response(serializer.data, status=status.HTTP_200_OK)
     elif req.method == 'POST':
         serializer = PostSerializer(data=req.data)
         if serializer.is_valid():
@@ -88,7 +88,7 @@ def posts_by_img(req):
             posts_cate = Post.objects.select_related('categoryID', 'placeID', 'adminID').filter(categoryID=categories.item())
             
             if posts_cate.count() == 0:
-                return Response("None of the posts found in the Category", status=status.HTTP_404_NOT_FOUND)
+                return Response("None of the posts found in the Category", status=status.HTTP_200_OK)
             #delete temp image from cloudinary
             imgPublicID = 'temp_img'
             cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload")
