@@ -1,10 +1,10 @@
 "use client";
 
+import AxiosLib from '@/app/lib/axiosInstance';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
-import AxiosLib from '../app/lib/axios';
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);

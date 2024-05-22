@@ -1,9 +1,9 @@
 "use client"
+import AxiosLib from '@/app/lib/axiosInstance';
 import { TextField } from '@mui/material';
 import Link from 'next/link';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
-import AxiosLib from '../lib/axios';
 
 export default function Register() {
   const [register, setRegister] = useState({
@@ -60,7 +60,6 @@ export default function Register() {
       } else if (register.password !== register.confirmPassword) {
         return Swal.fire('Error', 'Password must match the confirm password', 'error');
       }
-
 
       const createNewUser = {
         name: register.name,
