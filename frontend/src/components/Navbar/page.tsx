@@ -1,4 +1,4 @@
-import AxiosLib from '@/app/lib/axios';
+import AxiosLib from '@/app/lib/axiosInstance';
 import { useState } from 'react';
 
 const LogoutButton = () => {

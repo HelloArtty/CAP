@@ -1,5 +1,5 @@
 "use client";
-import AxiosLib from '@/app/lib/axios';
+import AxiosLib from '@/app/lib/axiosInstance';
 import { TextField } from '@mui/material';
 import Link from 'next/link';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
@@ -33,7 +33,7 @@ export default function Login() {
         try {
             const result = await AxiosLib.post('/user-api/log-in', loginUser)
             if (result.status === 200)
-                return (window.location.href = '/item')
+                return (window.location.href = '/search')
             console.log(result)
         } catch (error) {
             Swal.fire({
