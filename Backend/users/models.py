@@ -3,7 +3,6 @@ from django.utils import timezone
 from cloudinary.models import CloudinaryField
 from django.core.validators import validate_email
 
-
 class User(models.Model):
     userID = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
@@ -48,7 +47,7 @@ class Post(models.Model):
     adminID = models.ForeignKey(Admin, on_delete=models.CASCADE,related_name="admin")
     itemDetail = models.TextField()
     placeDetail = models.TextField()
-    image = models.CharField(max_length=256)
+    image =  models.CharField(max_length=256) #CloudinaryField('image')
     datePost = models.DateTimeField()
     
     def save(self, *args, **kwargs):
@@ -66,32 +65,3 @@ class TempImage(models.Model):
     
     def __str__(self):
         return self.image.url
-    
-# class Request(models.Model):
-#     requestID = models.AutoField(primary_key=True, unique=True)
-#     userID = models.ForeignKey(User, on_delete=models.CASCADE)
-#     placeID = models.ForeignKey(Place)
-#     categoryID = models.ForeignKey(Category)
-#     postID = models.ForeignKey(Post)
-#     placeDetail = models.TextField()
-#     itemDetail = models.TextField()
-#     image = CloudinaryField('image')
-#     isApproved = models.BooleanField( default=False)
-#     dateLost = models.DateTimeField()
-#     dateRequest = models.DateTimeField( auto_now_add=True)
-#     def save(self, *args, **kwargs):
-#         ''' On save, update timestamps '''
-#         if not self.requestID:
-#             self.created = timezone.now()
-#         self.modified = timezone.now()
-#         return super(Request, self).save(*args, **kwargs)
-#     def __str__(self):
-#         return self.itemDetail
-    
-
-
-
-    
-
-    
-

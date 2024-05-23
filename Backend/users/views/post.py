@@ -21,7 +21,7 @@ def posts_list(req):
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif req.method == 'POST':
         # get full image url
-        upload_result = cloudinary.uploader.upload(req.FILES['file'])
+        upload_result = cloudinary.uploader.upload(req.data['image'])
         img_path = upload_result['secure_url']
         req.data['image'] = img_path
         
@@ -30,7 +30,7 @@ def posts_list(req):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -46,8 +46,13 @@ def post_by_id(req, id):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     elif req.method == 'PUT':
+        
+        # delete old image from cloudinary
+        imgPublicID = item.image.split('/')[-1].split('.')[0]
+        cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload")
+        
         # get full image url
-        upload_result = cloudinary.uploader.upload(req.FILES['file'])
+        upload_result = cloudinary.uploader.upload(req.data['image'])
         img_path = upload_result['secure_url']
         req.data['image'] = img_path
         
@@ -55,8 +60,8 @@ def post_by_id(req, id):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_req)
-    
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
     elif req.method == 'DELETE':
         # delete item image from cloudinary
         serializer = PostSerializer(item)
