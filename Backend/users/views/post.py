@@ -1,14 +1,12 @@
+import cloudinary
+import cloudinary.uploader
+import environ
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from users.models import Post
 from users.serializers import PostJoinSerializer, PostSerializer
 
-from rest_framework.decorators import api_view 
-from rest_framework.response import Response
-from rest_framework import status
-
-import cloudinary.uploader
-import cloudinary
-
-import environ
 env = environ.Env()
 
 #-------------------------------------- item
@@ -21,7 +19,7 @@ def posts_list(req):
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif req.method == 'POST':
         # get full image url
-        upload_result = cloudinary.uploader.upload(req.FILES['file'])
+        upload_result = cloudinary.uploader.upload(req.FILES['image'])
         img_path = upload_result['secure_url']
         req.data['image'] = img_path
         
@@ -47,7 +45,7 @@ def post_by_id(req, id):
     
     elif req.method == 'PUT':
         # get full image url
-        upload_result = cloudinary.uploader.upload(req.FILES['file'])
+        upload_result = cloudinary.uploader.upload(req.FILES['image'])
         img_path = upload_result['secure_url']
         req.data['image'] = img_path
         
@@ -55,7 +53,7 @@ def post_by_id(req, id):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_req)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     elif req.method == 'DELETE':
         # delete item image from cloudinary
@@ -86,6 +84,7 @@ def posts_by_category(req,cate_id):
 #TODO : save pic to cloud 
 
 from users.Model import callModel
+
 
 @api_view(['GET','POST'])
 def posts_by_img(req):
