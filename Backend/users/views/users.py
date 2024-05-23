@@ -17,7 +17,7 @@ def users_list(request):
         #serialize them
         serializer = UserSerializer(users, many=True)
         #return json
-        return Response({"users":serializer.data})
+        return Response(serializer.data)
     #POST a new user
     elif request.method == 'POST':
         serializer = UserSerializer(data=request.data)

@@ -8,6 +8,8 @@ from rest_framework import status
 import cloudinary.uploader
 import cloudinary
 
+import environ
+env = environ.Env()
 
 #-------------------------------------- item
 @api_view(['GET', 'POST'])
@@ -18,7 +20,7 @@ def posts_list(req):
         serializer = PostJoinSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif req.method == 'POST':
-        
+        # get full image url
         upload_result = cloudinary.uploader.upload(req.FILES['file'])
         img_path = upload_result['secure_url']
         req.data['image'] = img_path
@@ -44,6 +46,11 @@ def post_by_id(req, id):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     elif req.method == 'PUT':
+        # get full image url
+        upload_result = cloudinary.uploader.upload(req.FILES['file'])
+        img_path = upload_result['secure_url']
+        req.data['image'] = img_path
+        
         serializer = PostSerializer(item, data=req.data)
         if serializer.is_valid():
             serializer.save()
