@@ -48,7 +48,7 @@ class Post(models.Model):
     adminID = models.ForeignKey(Admin, on_delete=models.CASCADE,related_name="admin")
     itemDetail = models.TextField()
     placeDetail = models.TextField()
-    image = CloudinaryField('image')
+    image = models.CharField(max_length=256)
     datePost = models.DateTimeField()
     
     def save(self, *args, **kwargs):
