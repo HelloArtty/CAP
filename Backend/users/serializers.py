@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from .models import *
 
+import environ
+env = environ.Env()
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
