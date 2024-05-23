@@ -21,7 +21,7 @@ def posts_list(req):
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif req.method == 'POST':
         # get full image url
-        upload_result = cloudinary.uploader.upload(req.data['image'])
+        upload_result = cloudinary.uploader.upload(req.FILES['image']) # if get as json,  use -> req.data['image']
         img_path = upload_result['secure_url']
         req.data['image'] = img_path
         
@@ -50,9 +50,9 @@ def post_by_id(req, id):
         # delete old image from cloudinary
         imgPublicID = item.image.split('/')[-1].split('.')[0]
         cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload")
-        
+
         # get full image url
-        upload_result = cloudinary.uploader.upload(req.data['image'])
+        upload_result = cloudinary.uploader.upload(req.FILES['image'])
         img_path = upload_result['secure_url']
         req.data['image'] = img_path
         
@@ -75,8 +75,9 @@ def post_by_id(req, id):
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
-def posts_by_category(req,cate_id):
+def posts_by_category(req):
     try:
+        cate_id = req.query_params.get('cate_id')
         posts = Post.objects.select_related('categoryID', 'placeID', 'adminID').filter(categoryID=cate_id)
     except Post.DoesNotExist:
         return Response("None of the posts found in the Category", status=status.HTTP_404_NOT_FOUND)
@@ -86,6 +87,20 @@ def posts_by_category(req,cate_id):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['GET'])
+def posts_filter(req):
+    try:
+        posts = Post.objects.select_related('categoryID', 'placeID', 'adminID')
+    except Post.DoesNotExist:
+        return Response("None of the posts found in the Category", status=status.HTTP_404_NOT_FOUND)
+    
+    if req.method == 'GET':
+        serializer = PostJoinSerializer(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 
 #TODO : save pic to cloud 
