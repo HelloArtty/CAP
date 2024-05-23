@@ -24,9 +24,9 @@ urlpatterns = [
     
     #post
     path('posts', posts_list),
-    path('posts/<int:id>', post_by_id),
-    path('posts-category/<int:cate_id>', posts_by_category),
-    #path('posts-filter/?cate_id=5&=50&latitude=55.1214', posts_filter),
+    path('posts-id', post_by_id),
+    path('posts-category', posts_by_category),
+    path('posts-filter', posts_filter),
     path('posts-img', posts_by_img),
     
     # search

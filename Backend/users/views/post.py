@@ -4,7 +4,7 @@ from users.serializers import PostJoinSerializer, PostSerializer
 from rest_framework.decorators import api_view 
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.db.models import Q
 import cloudinary.uploader
 import cloudinary
 
@@ -16,8 +16,8 @@ env = environ.Env()
 def posts_list(req):
     
     if req.method == 'GET':
-        posts = Post.objects.select_related('categoryID', 'placeID', 'adminID').all()
-        serializer = PostJoinSerializer(posts, many=True)
+        posts_query = Post.objects.select_related('categoryID', 'placeID', 'adminID').all()
+        serializer = PostJoinSerializer(posts_query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif req.method == 'POST':
         # get full image url
@@ -31,24 +31,24 @@ def posts_list(req):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-
-
 @api_view(['GET', 'PUT', 'DELETE'])
-def post_by_id(req, id):
+def post_by_id(req):
     
     try:
-        item = Post.objects.get(pk=id)
+        id = req.query_params.get('id',None)
+        post_query = Post.objects.get(pk=id)
+
     except Post.DoesNotExist:
-        return Response("Item ID not found", status=status.HTTP_404_NOT_FOUND)
+        return Response("Post ID not found", status=status.HTTP_404_NOT_FOUND)
     
     if req.method == 'GET':
-        serializer = PostJoinSerializer(item)
+        serializer = PostJoinSerializer(post_query)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     elif req.method == 'PUT':
         
         # delete old image from cloudinary
-        imgPublicID = item.image.split('/')[-1].split('.')[0]
+        imgPublicID = post_query.image.split('/')[-1].split('.')[0]
         cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload")
 
         # get full image url
@@ -56,7 +56,7 @@ def post_by_id(req, id):
         img_path = upload_result['secure_url']
         req.data['image'] = img_path
         
-        serializer = PostSerializer(item, data=req.data)
+        serializer = PostSerializer(post_query, data=req.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -64,12 +64,12 @@ def post_by_id(req, id):
         
     elif req.method == 'DELETE':
         # delete item image from cloudinary
-        serializer = PostSerializer(item)
+        serializer = PostSerializer(post_query)
         imgPublicID = serializer.data['image'].split('/')[-1].split('.')[0]
         cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload")
         
         # delete item from database
-        item.delete()
+        post_query.delete()
         return Response(data="Item deleted.",status=status.HTTP_204_NO_CONTENT)
     
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -77,33 +77,52 @@ def post_by_id(req, id):
 @api_view(['GET'])
 def posts_by_category(req):
     try:
-        cate_id = req.query_params.get('cate_id')
-        posts = Post.objects.select_related('categoryID', 'placeID', 'adminID').filter(categoryID=cate_id)
+        cate_id = req.query_params.get('cate_id',None)
+        posts_query = Post.objects.select_related('categoryID', 'placeID', 'adminID').filter(categoryID=cate_id)
     except Post.DoesNotExist:
         return Response("None of the posts found in the Category", status=status.HTTP_404_NOT_FOUND)
     
     if req.method == 'GET':
-        serializer = PostJoinSerializer(posts, many=True)
+        serializer = PostJoinSerializer(posts_query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+#TODO
 @api_view(['GET'])
 def posts_filter(req):
     try:
-        posts = Post.objects.select_related('categoryID', 'placeID', 'adminID')
+        cate_id = req.query_params.get('cate_id',None)
+        place_id = req.query_params.get('place_id',None)
+        asc = req.query_params.get('asc',None)
+
+        posts_query = Post.objects.select_related('categoryID', 'placeID', 'adminID').all()
+    
+        if cate_id:
+            posts_query = posts_query.filter(categoryID=cate_id)
+        
+        if place_id:
+            posts_query = posts_query.filter(placeID=place_id)
+            
+        if asc:
+            posts_query = posts_query.order_by('datePost__date','datePost__hour', 'datePost__minute')
+        else: 
+            posts_query = posts_query.order_by('-datePost__date','-datePost__hour', '-datePost__minute')
+
+
+        # check if no posts found
+        if not posts_query.count():
+            return Response("None of the posts found in the Category", status=status.HTTP_200_OK)
+        
     except Post.DoesNotExist:
-        return Response("None of the posts found in the Category", status=status.HTTP_404_NOT_FOUND)
+        return Response("None of the posts found in the Category", status=status.HTTP_200_OK)
     
     if req.method == 'GET':
-        serializer = PostJoinSerializer(posts, many=True)
+        serializer = PostJoinSerializer(posts_query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-
-
-#TODO : save pic to cloud 
 
 from users.Model import callModel
 
