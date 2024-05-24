@@ -37,12 +37,14 @@ def login(req):
 
             response = Response()
             response.set_cookie(key='token', value=token, httponly=True,secure=True, samesite='None')
-            return Response(data={'message':'Log in successfully'}, status=status.HTTP_200_OK)
+            response.data = {'message':'Log in successfully'}
+            response.status = status.HTTP_200_OK
             
         except Exception as error:
             return Response(data={'message': "Python error : "+ str(error) }, status=status.HTTP_400_BAD_REQUEST)
         
-    
+        return response
+
     return Response(data={'message':'Status not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
 

@@ -1,10 +1,10 @@
 "use client";
 
-import AxiosLib from '@/app/lib/axiosInstance';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import { faUpload } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import AxiosLib from "@/app/lib/axiosInstance";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import { faUpload } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useState } from "react";
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -15,30 +15,33 @@ export default function Home() {
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
       uploadImage(file);
-      console.log('File selected:', file);
+      console.log("File selected:", file);
     }
   };
 
   const uploadImage = async (file: File) => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     setUploading(true);
     try {
-      const response = await AxiosLib.post('/user-api/posts-img', formData, {
+      const response = await AxiosLib.post("/user-api/posts-img", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      console.log('Upload response:', response);
+      console.log("Upload response:", response);
       const categoryId = response.data.cate_id;
-      console.log('Category ID:', categoryId);
+      console.log("Category ID:", categoryId);
+
       if (categoryId) {
-        window.location.href = `/search?category=${encodeURIComponent(categoryId)}`;
+        window.location.href = `/search?category=${encodeURIComponent(
+          categoryId
+        )}`;
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error("Upload error:", error);
     } finally {
       setUploading(false);
     }
@@ -46,7 +49,7 @@ export default function Home() {
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Search form submitted:', e.currentTarget);
+    console.log("Search form submitted:", e.currentTarget);
     const inputElement = e.currentTarget[0] as HTMLInputElement;
     const searchTerm = inputElement.value;
     console.log("Search initiated:", searchTerm);
@@ -67,13 +70,22 @@ export default function Home() {
                 placeholder="Search"
                 className="flex-grow p-2 rounded-l-lg border border-gray-300 focus:outline-none"
               />
-              <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-r-lg">Search</button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-500 text-white rounded-r-lg"
+              >
+                Search
+              </button>
             </div>
             <div
               className="flex items-center justify-center w-full h-full bg-blue-500 p-2 rounded-lg cursor-pointer"
-              onClick={() => document.getElementById('fileInput')?.click()}
+              onClick={() => document.getElementById("fileInput")?.click()}
             >
-              <FontAwesomeIcon icon={faUpload} size="2x" className="text-white" />
+              <FontAwesomeIcon
+                icon={faUpload}
+                size="2x"
+                className="text-white"
+              />
               <input
                 id="fileInput"
                 type="file"
@@ -86,7 +98,11 @@ export default function Home() {
         </div>
         {selectedImage && (
           <div className="mt-4">
-            <img src={selectedImage} alt="Selected" className="max-w-full max-h-64 rounded" />
+            <img
+              src={selectedImage}
+              alt="Selected"
+              className="max-w-full max-h-64 rounded"
+            />
             {uploading && <p className="text-white">Uploading...</p>}
           </div>
         )}
