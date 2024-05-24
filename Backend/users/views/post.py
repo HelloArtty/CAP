@@ -8,6 +8,8 @@ from users.decorators import allowed_users
 from users.models import Post
 from users.serializers import PostJoinSerializer, PostSerializer
 
+from users.decorators import allowed_users
+
 env = environ.Env()
 
 #-------------------------------------- item
@@ -33,7 +35,7 @@ def posts_list(req):
 
 
 @api_view(['GET'])
-#@allowed_users(allowed_roles=['user','admin'])
+@allowed_users(allowed_roles=['user','admin'])
 def get_post_by_id(req):
     
     try:
@@ -49,7 +51,7 @@ def get_post_by_id(req):
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['PUT', 'DELETE'])
-#@allowed_users(allowed_roles=['admin'])
+@allowed_users(allowed_roles=['admin'])
 def update_delete_post_by_id(req):
     
     try:
@@ -61,13 +63,12 @@ def update_delete_post_by_id(req):
     
     if req.method == 'PUT':
         
-        # delete old image from cloudinary
-        imgPublicID = post_query.image.split('/')[-1].split('.')[0]
-        cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload")
-
-        # get full image url
+        
+        imgPublicID = post_query.image.split('/')[-1].split('.')[0] 
+        cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload") # delete old image from cloudinary
+        
         upload_result = cloudinary.uploader.upload(req.FILES['image'])
-        img_path = upload_result['secure_url']
+        img_path = upload_result['secure_url'] # get full image url
         req.data['image'] = img_path
         
         serializer = PostSerializer(post_query, data=req.data)
@@ -77,13 +78,12 @@ def update_delete_post_by_id(req):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     elif req.method == 'DELETE':
-        # delete item image from cloudinary
+        
         serializer = PostSerializer(post_query)
         imgPublicID = serializer.data['image'].split('/')[-1].split('.')[0]
-        cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload")
+        cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload") # delete item image from cloudinary
         
-        # delete item from database
-        post_query.delete()
+        post_query.delete()  # delete item from database
         return Response(data="Item deleted.",status=status.HTTP_204_NO_CONTENT)
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -126,9 +126,8 @@ def posts_filter(req):
         else: 
             posts_query = posts_query.order_by('-datePost__date','-datePost__hour', '-datePost__minute')
 
-        # check if no posts found
-        if not posts_query.count():
-            return Response("None of the posts found in the Category", status=status.HTTP_200_OK)
+        if not posts_query.count(): # check if no posts found
+            return Response("None of the posts found in the Category", status=status.HTTP_200_OK)  
         
         serializer = PostJoinSerializer(posts_query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -150,17 +149,16 @@ def posts_by_img(req):
     if req.method == 'POST':
         print("post_by_img_func")
         try:
-            #upload image to cloudinary
-            upload_result = cloudinary.uploader.upload(req.FILES['file'], public_id = 'temp_img')
+            
+            upload_result = cloudinary.uploader.upload(req.FILES['file'], public_id = 'temp_img') #upload image to cloudinary
             img_path = upload_result['secure_url']
             
-            # call model -> predict and get category
             cate_id = callModel.predict(img_path) #pass image path to yolov5 model
 
-            cate_id = None if cate_id is None else int(cate_id)
-            #delete temp image from cloudinary
+            cate_id = None if cate_id is None else int(cate_id) # if model cannot capture any object, return None
+            
             imgPublicID = 'temp_img'
-            cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload")
+            cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload") #delete temp image from cloudinary
         except Exception as error:
                 return Response(data={'Error at post_by_img':str(error)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(data={"cate_id":cate_id}, status=status.HTTP_200_OK)
