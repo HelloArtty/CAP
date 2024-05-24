@@ -1,30 +1,27 @@
 "use client";
 
+import AxiosLib from "@/app/lib/axiosInstance";
+import { updateURLParams } from "@/app/utils/utils";
 import Navbar from "@/components/Navbar/page";
 import { useEffect, useState } from 'react';
 import PostList from "./PostList";
 
 async function getPosts() {
     try {
-        const res = await fetch('http://127.0.0.1:8000/user-api/posts');
-        if (!res.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await res.json();
+        const res = await AxiosLib.get('/user-api/posts');
+        const data = res.data;
         return Array.isArray(data) ? data : [];
+
     } catch (err) {
         console.error(err);
         return [];
     }
 }
 
-async function getFilteredPosts(searchQuery: string) {
+async function getFilterPosts(searchQuery: string) {
     try {
-        const res = await fetch(`http://127.0.0.1:8000/user-api/posts-filter?${searchQuery}`);
-        if (!res.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await res.json();
+        const res = await AxiosLib.get(`/user-api/posts-filter?${searchQuery}`);
+        const data = res.data;
         return Array.isArray(data) ? data : [];
     } catch (err) {
         console.error(err);
@@ -33,53 +30,69 @@ async function getFilteredPosts(searchQuery: string) {
 }
 
 export default function Post() {
-    const [posts, setPosts] = useState<object[]>([]);
+    const [posts, setPosts] = useState<Array<any>>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [category, setCategory] = useState('');
     const [location, setLocation] = useState('');
     const [asc, setAsc] = useState(true);
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const data = await getPosts();
-                setPosts(data);
-            } catch (err) {
-                setError(error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchData();
-    }, []);
-
-    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setCategory(e.target.value);
-    };
-
-    const handleLocationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setLocation(e.target.value);
-    };
-
-    const handleSearchClick = async () => {
+    const fetchData = async (searchQuery = '') => {
         setLoading(true);
         try {
-            const searchQuery = new URLSearchParams({
-                cate_id: category,
-                place_id: location,
-                asc: asc.toString(),
-            }).toString();
-            
-            const data = await getFilteredPosts(searchQuery);
+            const data = searchQuery ? await getFilterPosts(searchQuery) : await getPosts();
             setPosts(data);
-            console.log(data);
-            console.log(searchQuery);
         } catch (err) {
             setError(error);
         } finally {
             setLoading(false);
         }
+    };
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const categoryParam = params.get('category') || '';
+        const locationParam = params.get('location') || '';
+        const ascParam = params.get('asc') !== 'false';
+
+        setCategory(categoryParam);
+        setLocation(locationParam);
+        setAsc(ascParam);
+
+        const searchQuery = new URLSearchParams({
+            cate_id: categoryParam,
+            place_id: locationParam,
+            asc: ascParam.toString(),
+        }).toString();
+
+        fetchData(searchQuery);
+    }, []);
+
+    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setCategory(value);
+        updateURLParams({ category: value });
+    };
+
+    const handleLocationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setLocation(value);
+        updateURLParams({ location: value });
+    };
+
+    const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value === 'true';
+        setAsc(value);
+        updateURLParams({ asc: value.toString() });
+    };
+
+    const handleSearchClick = async () => {
+        const searchQuery = new URLSearchParams({
+            cate_id: category,
+            place_id: location,
+            asc: asc.toString(),
+        }).toString();
+        fetchData(searchQuery);
     };
 
     return (
@@ -88,7 +101,8 @@ export default function Post() {
             <div className="w-screen h-fit p-7 bg-red-500">
                 <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
                     <div>
-                        <select className="border p-2 rounded mr-2"
+                        <select
+                            className="border p-2 rounded mr-2"
                             onChange={handleCategoryChange}
                             value={category}>
                             <option value="">Select Category</option>
@@ -113,21 +127,25 @@ export default function Post() {
                             <option value="18">Water Bottle</option>
                             <option value="19">iPad</option>
                         </select>
-                        <select className="border p-2 rounded mr-2"
+                        <select
+                            className="border p-2 rounded mr-2"
                             onChange={handleLocationChange}
                             value={location}>
                             <option value="">Select Location</option>
                             <option value="0">Location 1</option>
                             <option value="1">Location 2</option>
                         </select>
-                        <select className="border p-2 rounded mr-2"
-                            onChange={(e) => setAsc(e.target.value === 'true')}
+                        <select
+                            className="border p-2 rounded mr-2"
+                            onChange={handleSortChange}
                             value={asc.toString()}>
                             <option value="true">Latest</option>
                             <option value="false">Oldest</option>
                         </select>
                     </div>
-                    <button className="bg-blue-500 text-white py-2 px-4 rounded" onClick={handleSearchClick}>
+                    <button
+                        className="bg-blue-500 text-white py-2 px-4 rounded"
+                        onClick={handleSearchClick}>
                         Find it now
                     </button>
                 </div>
@@ -152,7 +170,6 @@ export default function Post() {
                 </div>
             </div>
             <div className="flex justify-center mt-6 space-x-2">
-                {/* Pagination buttons */}
                 <button className="bg-blue-500 text-white py-2 px-4 rounded mx-1">1</button>
                 <button className="bg-gray-300 text-gray-700 py-2 px-4 rounded mx-1">2</button>
                 <button className="bg-gray-300 text-gray-700 py-2 px-4 rounded mx-1">3</button>
