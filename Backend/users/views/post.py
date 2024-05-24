@@ -92,12 +92,15 @@ def posts_by_category(req):
 @api_view(['GET'])
 def posts_filter(req):
     try:
+        search = req.query_params.get('search',None)
         cate_id = req.query_params.get('cate_id',None)
         place_id = req.query_params.get('place_id',None)
         asc = req.query_params.get('asc',None)
 
         posts_query = Post.objects.select_related('categoryID', 'placeID', 'adminID').all()
-    
+
+        if search:
+            posts_query = posts_query.filter(title__icontains=search)
         if cate_id:
             posts_query = posts_query.filter(categoryID=cate_id)
         

@@ -1,5 +1,5 @@
 from users.models import Post
-from users.serializers import PostSerializer
+from users.serializers import PostJoinSerializer
 
 from rest_framework.decorators import api_view 
 from rest_framework.response import Response
@@ -13,6 +13,6 @@ def search_posts(req):
     except Post.DoesNotExist:
         return Response("No such the post", status=status.HTTP_200_OK)
 
-    serializer = PostSerializer(posts_query, many=True)
+    serializer = PostJoinSerializer(posts_query, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
