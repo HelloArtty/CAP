@@ -43,7 +43,7 @@ export default function Home() {
     const inputElement = e.currentTarget[0] as HTMLInputElement;
     const searchTerm = inputElement.value;
     console.log("Search initiated:", searchTerm);
-    window.location.href = `/search?=${encodeURIComponent(searchTerm)}`;
+    window.location.href = `/search?search=${encodeURIComponent(searchTerm)}`;
   };
 
 

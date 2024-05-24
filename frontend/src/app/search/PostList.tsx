@@ -7,7 +7,6 @@ export default function PostList({ post }: { post: any }) {
                     <div className="bg-white">
                         <img className=" w-auto h-64 object-cover"
                             src={post.image} alt="post"
-                            
                         />
                         <h1>{post.title}</h1>
                         <p>{post.datePost}</p>
