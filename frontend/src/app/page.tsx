@@ -15,30 +15,33 @@ export default function Home() {
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
       uploadImage(file);
-      console.log('File selected:', file);
+      console.log("File selected:", file);
     }
   };
 
   const uploadImage = async (file: File) => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     setUploading(true);
     try {
-      const response = await AxiosLib.post('/user-api/posts-img', formData, {
+      const response = await AxiosLib.post("/user-api/posts-img", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      console.log('Upload response:', response);
+      console.log("Upload response:", response);
       const categoryId = response.data.cate_id;
-      console.log('Category ID:', categoryId);
+      console.log("Category ID:", categoryId);
+
       if (categoryId) {
-        window.location.href = `/search?category=${encodeURIComponent(categoryId)}`;
+        window.location.href = `/search?category=${encodeURIComponent(
+          categoryId
+        )}`;
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error("Upload error:", error);
     } finally {
       setUploading(false);
     }
@@ -46,7 +49,7 @@ export default function Home() {
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Search form submitted:', e.currentTarget);
+    console.log("Search form submitted:", e.currentTarget);
     const inputElement = e.currentTarget[0] as HTMLInputElement;
     const searchTerm = inputElement.value;
     console.log("Search initiated:", searchTerm);

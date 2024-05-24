@@ -102,6 +102,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000"
 ]
 
+CORS_ALLOWED_ALL_ORIGINS = True
+# SESSION_COOKIE_DOMAIN = "localhost"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

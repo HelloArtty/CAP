@@ -68,7 +68,8 @@ def signup(req):
                 token = jwt.encode(payload, env('jwt_secret') , algorithm='HS256')
                 response = Response()
                 response.set_cookie(key='token', value=token, httponly=True)
-                
+                response.data = {'message':'User created successfully'}
+                response.status = status.HTTP_201_CREATED
                 
             except Exception as error:
                 return Response(data={'message':str(e) for e in error}, status=status.HTTP_400_BAD_REQUEST)
@@ -77,7 +78,7 @@ def signup(req):
             return Response(data={'message':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
         # everything is ok so far
-        return Response(data={'message':'User created successfully'}, status=status.HTTP_201_CREATED)
+        return response
         
     return Response(data={'message':'Status not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         
