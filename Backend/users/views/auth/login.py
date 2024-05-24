@@ -6,7 +6,7 @@ from rest_framework import status
 from users.models import User
 from ..PasswordManagement import MatchingPassword
 
-import jwt, datetime
+import jwt, datetime, time
 import environ
 
 env = environ.Env()
@@ -27,12 +27,19 @@ def login(req):
             if not MatchingPassword(password,user.password):
                 return Response(data={'message':'Incorrect Password'}, status=status.HTTP_400_BAD_REQUEST)
             
-            #generate token using            
+            #generate token using     
+            current_time = time.time()  # Current time in UTC
             payload = {
+                'id': user.userID,
+                'exp': current_time + 3600,  # Expiration time (1 hour from now)
+                'iat': current_time  # Issued at time
+            }
+            
+            '''payload = {
                 'id' : user.userID,
                 'exp' : datetime.datetime.now() + datetime.timedelta(minutes=60),
                 'iat' : datetime.datetime.now()
-            }
+            }'''
             token = jwt.encode(payload, env('jwt_secret') , algorithm='HS256')
 
             response = Response()
