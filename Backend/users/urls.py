@@ -29,6 +29,4 @@ urlpatterns = [
     path('posts-filter', posts_filter),
     path('posts-img', posts_by_img),
     
-    # search
-    path('search-posts', search_posts),
 ]
