@@ -2,7 +2,7 @@
 
 import AxiosLib from '@/app/lib/axiosInstance';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 
@@ -54,43 +54,40 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-blue-700 h-screen flex flex-col items-center justify-center">
-      <div className="flex flex-col justify-center items-center">
-        <div className="bg-red-600 p-4 rounded">
-          <h1 className="text-white text-4xl">Finder</h1>
-        </div>
-        <div className="bg-green-600 p-4 rounded mt-4 w-full max-w-md">
-          <form className="flex flex-col items-center" onSubmit={handleSearch}>
-            <div className="flex w-full mb-2">
-              <input
-                type="text"
-                placeholder="Search"
-                className="flex-grow p-2 rounded-l-lg border border-gray-300 focus:outline-none"
-              />
-              <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-r-lg">Search</button>
-            </div>
-            <div
-              className="flex items-center justify-center w-full h-full bg-blue-500 p-2 rounded-lg cursor-pointer"
-              onClick={() => document.getElementById('fileInput')?.click()}
-            >
-              <FontAwesomeIcon icon={faUpload} size="2x" className="text-white" />
-              <input
-                id="fileInput"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-            </div>
-          </form>
-        </div>
-        {selectedImage && (
-          <div className="mt-4">
-            <img src={selectedImage} alt="Selected" className="max-w-full max-h-64 rounded" />
-            {uploading && <p className="text-white">Uploading...</p>}
+    <>
+      <div className="bg-blue-main h-screen flex flex-col items-center justify-center">
+        <div className="flex flex-col justify-center items-center w-full px-4">
+          <div className="p-4 rounded">
+            <h1 className="text-white font-bold text-8xl md:text-9xl">Finder</h1>
           </div>
-        )}
+          <div className="w-full flex justify-center pt-10">
+            <div className="rounded w-full max-w-screen-md">
+              <form className="flex flex-col items-center w-full " onSubmit={handleSearch}>
+                <div className="flex w-full mb-2">
+                  <div className="px-4 py-2 bg-white rounded-l-lg cursor-pointer">
+                    <FontAwesomeIcon icon={faSearch} size="2x" className="text-gray-600" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Find what you're looking for right here....."
+                    className="flex-grow p-2 focus:outline-none"
+                  />
+                  <div className="px-4 py-2 bg-white rounded-r-lg cursor-pointer" onClick={() => document.getElementById('fileInput')?.click()}>
+                    <FontAwesomeIcon icon={faCamera} size="2x" className="text-gray-600" />
+                    <input
+                      id="fileInput"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
