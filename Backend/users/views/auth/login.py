@@ -6,7 +6,7 @@ from rest_framework import status
 from users.models import User
 from ..PasswordManagement import MatchingPassword
 
-import jwt, datetime, time
+import jwt, time
 import environ
 
 env = environ.Env()
@@ -19,15 +19,13 @@ def login(req):
             password = req.data['password']  
             user = User.objects.filter(email=email).first() #first object in the database that match
             
-            #check if email exists
-            if user == None:
+            if user == None: #check if email exists
                 return Response(data={'message':'User Not Found'}, status=status.HTTP_400_BAD_REQUEST)
                 
-            #check if password is correct
-            if not MatchingPassword(password,user.password):
-                return Response(data={'message':'Incorrect Password'}, status=status.HTTP_400_BAD_REQUEST)
             
-            #generate token using     
+            if not MatchingPassword(password,user.password): #check if password is correct
+                return Response(data={'message':'Incorrect Password'}, status=status.HTTP_400_BAD_REQUEST)
+
             current_time = time.time()  # Current time in UTC
             payload = {
                 'id': user.userID,
@@ -35,12 +33,7 @@ def login(req):
                 'iat': current_time  # Issued at time
             }
             
-            '''payload = {
-                'id' : user.userID,
-                'exp' : datetime.datetime.now() + datetime.timedelta(minutes=60),
-                'iat' : datetime.datetime.now()
-            }'''
-            token = jwt.encode(payload, env('jwt_secret') , algorithm='HS256')
+            token = jwt.encode(payload, env('jwt_secret') , algorithm='HS256') #generate token  
 
             response = Response()
             response.set_cookie(key='token', value=token, httponly=True,secure=True, samesite='None')

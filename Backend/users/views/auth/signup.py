@@ -13,7 +13,7 @@ from rest_framework import status
 from ..PasswordManagement import CheckPasswordStrength,HashingPassword
 
 from users.models import User
-import jwt, datetime
+import jwt, time
 import environ
 
 env = environ.Env()
@@ -26,46 +26,42 @@ def signup(req):
 
     if req.method == 'POST':
 
-        # valide email format
         try:
-            validate_email(req.data['email'])
+            validate_email(req.data['email']) # valide email format
         except ValidationError as error:
             return Response(data={'message':str(e) for e in error}, status=status.HTTP_400_BAD_REQUEST) #str(error) for error in e -> convert list to string
         
-        #check if email already exists
-        usersIsExisted = User.objects.filter(email=req.data['email']).exists()
+        usersIsExisted = User.objects.filter(email=req.data['email']).exists() #check if email already exists
         if usersIsExisted:
             return Response(data={'message':'This Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
         
-        #check if telephone already exists
-        telIsExisted = User.objects.filter(tel=req.data['tel']).exists()
+        telIsExisted = User.objects.filter(tel=req.data['tel']).exists() #check if telephone already exists
         if telIsExisted:
             return Response(data={'message':'This Telephone number already exists'}, status=status.HTTP_400_BAD_REQUEST)
         
-        #checking password strength
-        message = CheckPasswordStrength(req.data['password'])
+        
+        message = CheckPasswordStrength(req.data['password']) #checking password strength
         if message != "":
             return Response(data={'message':message}, status=status.HTTP_400_BAD_REQUEST)
         if req.data['password'] != req.data['confirmPassword']:
             return Response(data={'message':'Passwords do not match'}, status=status.HTTP_400_BAD_REQUEST)
         
-        #hashing password
-        req.data['password'] = HashingPassword(req.data['password'])
+        req.data['password'] = HashingPassword(req.data['password']) #hashing password
         
-        #save user after hashing password
         serializer = SignUpSerializer(data=req.data)
-        if serializer.is_valid():
+        if serializer.is_valid(): 
             try:
                 serializer.save()
                 
-                #generate token using  
                 user = User.objects.get(email=req.data['email'])          
+                current_time = time.time()  # Current time in UTC
                 payload = {
-                    'id' : user.userID,
-                    'exp' : datetime.datetime.now() + datetime.timedelta(minutes=60),
-                    'iat' : datetime.datetime.now()
+                    'id': user.userID,
+                    'exp': current_time + 3600,  # Expiration time (1 hour from now)
+                    'iat': current_time  # Issued at time
                 }
-                token = jwt.encode(payload, env('jwt_secret') , algorithm='HS256')
+            
+                token = jwt.encode(payload, env('jwt_secret') , algorithm='HS256')#generate token  
                 response = Response()
                 response.set_cookie(key='token', value=token, httponly=True)
                 response.data = {'message':'User created successfully'}
@@ -74,11 +70,8 @@ def signup(req):
             except Exception as error:
                 return Response(data={'message':str(e) for e in error}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            # if serializer is not valid
-            return Response(data={'message':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={'message':serializer.errors}, status=status.HTTP_400_BAD_REQUEST) # if serializer is not valid
 
-        # everything is ok so far
-        return response
-        
+        return response # everything is ok so far
     return Response(data={'message':'Status not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         
