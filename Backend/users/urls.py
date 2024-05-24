@@ -30,5 +30,5 @@ urlpatterns = [
     path('posts-img', posts_by_img),
     
     # search
-    path('search-posts/<str:search_title>', search_posts),
+    path('search-posts', search_posts),
 ]
