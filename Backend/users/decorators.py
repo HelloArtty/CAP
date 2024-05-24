@@ -6,6 +6,10 @@ from rest_framework import status
 
 from users.models import User,Admin
 
+import time
+import datetime
+
+
 def allowed_users(allowed_roles=[]):   
     def decorator(view_func):
         def wrapper_func(request,*args, **kwargs):
@@ -14,15 +18,19 @@ def allowed_users(allowed_roles=[]):
                 env = environ.Env()
                 token = request.COOKIES.get('token')
                 # check if user is login
-                if not token:
+                if token == None:
                     Response(data={'Log in is required'}, status=status.HTTP_401_UNAUTHORIZED)
-                # decode the token
-                payload = jwt.decode(token, env('jwt_secret'), algorithms=['HS256'])
+                    
+                # Decode the token (with leeway to allow for clock skew)
+                payload = jwt.decode(token, env('JWT_SECRET'), algorithms=['HS256'], leeway=60)
+            
 
                 group = []
-                if Admin.objects.get(adminID=payload['id']).exists():
-                    group = 'admin'
-                elif User.objects.get(userID=payload['id']).exists():
+                admin = Admin.objects.get(pk=payload['id']).first()
+                user = User.objects.get(pk=payload['id']).first()
+                if admin.exists():
+                    group = 'admin' # == admin
+                elif user.exists():
                     group = 'user' # == user
                 
                 if group in allowed_roles:
@@ -30,8 +38,12 @@ def allowed_users(allowed_roles=[]):
                 else:
                     return Response(data={'message':'You are not authorized to access this page'}, status=status.HTTP_401_UNAUTHORIZED)
             
+            except jwt.ExpiredSignatureError:
+                return Response(data={'error': 'Token has expired'}, status=status.HTTP_401_UNAUTHORIZED)
+            except jwt.InvalidTokenError as error:
+                return Response(data={'error': f'Invalid token: {str(error)}'}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as error:
-                return Response(data={'Error at @required_login: ':str(error)}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(data={'error': f'Error at @allowed_user: {str(error)}'}, status=status.HTTP_400_BAD_REQUEST)
     
         return wrapper_func
     return decorator
@@ -67,7 +79,6 @@ def required_login(view_func):
 
 # check if user is already login
 def is_login(view_func):
-    @wraps(view_func)
     def wrapper_func(request,*args, **kwargs):
         env = environ.Env()
         token = request.COOKIES.get('token')
@@ -84,7 +95,7 @@ def is_login(view_func):
     
 # admin_only
 def admin_only(view_func):
-    @wraps(view_func)
+
     def wrapper_func(request,*args, **kwargs):        
         env = environ.Env()
         token = request.COOKIES.get('token')

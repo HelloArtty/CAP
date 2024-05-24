@@ -33,7 +33,7 @@ def posts_list(req):
 
 
 @api_view(['GET'])
-@allowed_users(allowed_roles=['user','admin'])
+#@allowed_users(allowed_roles=['user','admin'])
 def get_post_by_id(req):
     
     try:
@@ -49,7 +49,7 @@ def get_post_by_id(req):
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['PUT', 'DELETE'])
-@allowed_users(allowed_roles=['admin'])
+#@allowed_users(allowed_roles=['admin'])
 def update_delete_post_by_id(req):
     
     try:
@@ -130,14 +130,15 @@ def posts_filter(req):
         if not posts_query.count():
             return Response("None of the posts found in the Category", status=status.HTTP_200_OK)
         
+        serializer = PostJoinSerializer(posts_query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
     except Post.DoesNotExist:
         return Response("None of the posts found in the Category", status=status.HTTP_200_OK)
     
-    if req.method == 'GET':
-        serializer = PostJoinSerializer(posts_query, many=True)
-        return Response(data ={serializer.data}, status=status.HTTP_200_OK)
-    
-    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    except Exception as error:
+        return Response(data={'Error at posts_filter':str(error)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 from users.Model import callModel
