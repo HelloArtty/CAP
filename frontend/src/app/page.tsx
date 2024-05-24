@@ -31,6 +31,7 @@ export default function Home() {
         },
       });
 
+<<<<<<< HEAD
       console.log("Upload response:", response);
       const categoryId = response.data.cate_id;
       console.log("Category ID:", categoryId);
@@ -44,6 +45,11 @@ export default function Home() {
       console.error("Upload error:", error);
     } finally {
       setUploading(false);
+=======
+      console.log('Upload response:', response);
+    } catch (error) {
+      console.error('Upload error:', error);
+>>>>>>> parent of e403b50 (search filter , image  work)
     }
   };
 
@@ -56,8 +62,10 @@ export default function Home() {
     window.location.href = `/search?search=${encodeURIComponent(searchTerm)}`;
   };
 
+
   return (
     <>
+<<<<<<< HEAD
       <div className="bg-blue-main h-screen flex flex-col items-center justify-center">
         <div className="flex flex-col justify-center items-center w-full px-4">
           <div className="p-4 rounded">
@@ -89,6 +97,44 @@ export default function Home() {
               </form>
             </div>
           </div>
+=======
+      <div className="bg-blue-700 h-screen flex flex-col items-center justify-center">
+        <div className="flex flex-col justify-center items-center">
+          <div className="bg-red-600 p-4 rounded">
+            <h1 className="text-white text-4xl">Finder</h1>
+          </div>
+          <div className="bg-green-600 p-4 rounded mt-4 w-full max-w-md">
+            <form className="flex flex-col items-center" onSubmit={handleSearch}>
+              <div className="flex w-full mb-2">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="flex-grow p-2 rounded-l-lg border border-gray-300 focus:outline-none"
+                />
+                <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-r-lg">Search</button>
+              </div>
+              <div
+                className="flex items-center justify-center w-full h-full bg-blue-500 p-2 rounded-lg cursor-pointer"
+                onClick={() => document.getElementById('fileInput')?.click()}
+              >
+                <FontAwesomeIcon icon={faUpload} size="2x" className="text-white" />
+                <input
+                  id="fileInput"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </div>
+            </form>
+          </div>
+          {selectedImage && (
+            <div className="mt-4">
+              <img src={selectedImage} alt="Selected" className="max-w-full max-h-64 rounded" />
+              {uploading && <p className="text-white">Uploading...</p>}
+            </div>
+          )}
+>>>>>>> parent of e403b50 (search filter , image  work)
         </div>
       </div>
     </>
