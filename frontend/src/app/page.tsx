@@ -25,13 +25,12 @@ export default function Home() {
 
     setUploading(true);
     try {
-      const response = await AxiosLib.post('/user-api/posts-img', formData
-      , {
+      const response = await AxiosLib.post('/user-api/posts-img', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-      
+
       console.log('Upload response:', response);
     } catch (error) {
       console.error('Upload error:', error);
@@ -40,10 +39,13 @@ export default function Home() {
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log('Search form submitted:', e.currentTarget);
     const inputElement = e.currentTarget[0] as HTMLInputElement;
-    console.log("Search initiated");
-    console.log(inputElement.value);
+    const searchTerm = inputElement.value;
+    console.log("Search initiated:", searchTerm);
+    window.location.href = `/search?=${encodeURIComponent(searchTerm)}`;
   };
+
 
   return (
     <>

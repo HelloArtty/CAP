@@ -2,7 +2,6 @@
 
 import AxiosLib from "@/app/lib/axiosInstance";
 import { updateURLParams } from "@/app/utils/utils";
-import Navbar from "@/components/Navbar/page";
 import { useEffect, useState } from 'react';
 import PostList from "./PostList";
 
@@ -97,7 +96,7 @@ export default function Post() {
 
     return (
         <>
-            <Navbar />
+            
             <div className="w-screen h-fit p-7 bg-red-500">
                 <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
                     <div>
