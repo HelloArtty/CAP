@@ -1,30 +1,13 @@
-<<<<<<< HEAD
 import cloudinary
 import cloudinary.uploader
 import environ
-
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
-from users.models import Post
-from users.serializers import PostJoinSerializer, PostSerializer
-
 from users.decorators import allowed_users
-
-=======
 from users.models import Post
 from users.serializers import PostJoinSerializer, PostSerializer
 
-from rest_framework.decorators import api_view 
-from rest_framework.response import Response
-from rest_framework import status
-from django.db.models import Q
-import cloudinary.uploader
-import cloudinary
-
-import environ
->>>>>>> parent of e403b50 (search filter , image  work)
 env = environ.Env()
 
 #-------------------------------------- item
@@ -159,6 +142,7 @@ def posts_filter(req):
 
 from users.Model import callModel
 
+
 @api_view(['GET','POST'])
 def posts_by_img(req):
     
@@ -177,15 +161,7 @@ def posts_by_img(req):
             imgPublicID = 'temp_img'
             cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload")
         except Exception as error:
-<<<<<<< HEAD
                 return Response(data={'Error at post_by_img':str(error)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(data={"cate_id":cate_id}, status=status.HTTP_200_OK)
-=======
-                return Response(data={'message':str(error)}, status=status.HTTP_400_BAD_REQUEST)
-
-        return Response(data={cate_id}, status=status.HTTP_200_OK)
-        # return Response({"predictions":predictions.tolist(),"scores":scores.tolist(),"categories":categories.tolist(),"category":pred_class.cateName}) 
-        
->>>>>>> parent of e403b50 (search filter , image  work)
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
