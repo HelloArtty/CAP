@@ -133,25 +133,21 @@ from users.Model import callModel
 def posts_by_img(req):
     
     if req.method == 'POST':
-        
-        upload_result = cloudinary.uploader.upload(req.FILES['file'], public_id = 'temp_img')
-        img_path = upload_result['secure_url']
-
         try:
-            # call model -> predict and get category
-            categories = callModel.predict(img_path) #pass image path to yolov5 model
-            posts_cate = Post.objects.select_related('categoryID', 'placeID', 'adminID').filter(categoryID=categories.item())
+            #upload image to cloudinary
+            upload_result = cloudinary.uploader.upload(req.FILES['file'], public_id = 'temp_img')
+            img_path = upload_result['secure_url']
             
-            if posts_cate.count() == 0:
-                return Response("None of the posts found in the Category", status=status.HTTP_200_OK)
+            # call model -> predict and get category
+            cate_id = int(callModel.predict(img_path)) #pass image path to yolov5 model
+
             #delete temp image from cloudinary
             imgPublicID = 'temp_img'
             cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload")
         except Exception as error:
-                return Response(data={'message':str(e) for e in error}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(data={'message':str(error)}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = PostJoinSerializer(posts_cate, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(data={cate_id}, status=status.HTTP_200_OK)
         # return Response({"predictions":predictions.tolist(),"scores":scores.tolist(),"categories":categories.tolist(),"category":pred_class.cateName}) 
         
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
