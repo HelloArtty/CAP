@@ -122,7 +122,7 @@ export default function Post() {
                                 <input
                                     type="text"
                                     placeholder="Search"
-                                    className="flex-grow p-2 rounded-l-lg border border-gray-300 focus:outline-none"
+                                    className="flex-grow p-2 rounded border border-gray-300 "
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
