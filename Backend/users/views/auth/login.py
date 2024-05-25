@@ -24,10 +24,13 @@ def login(req):
                 admin = Admin.objects.filter(email=email).first()
                 if admin == None:
                     return Response(data={'message':'User Not Found'}, status=status.HTTP_400_BAD_REQUEST)
-                return 
-                
             
-            if not MatchingPassword(password,user.password): #check if password is correct
+            if user:
+                role = user
+            else:
+                role = admin
+            
+            if not MatchingPassword(password,role.password): #check if password is correct
                 return Response(data={'message':'Incorrect Password'}, status=status.HTTP_400_BAD_REQUEST)
 
             current_time = time.time()  # Current time in UTC
@@ -43,9 +46,9 @@ def login(req):
                     'exp': current_time + 3600,  # Expiration time (1 hour from now)
                     'iat': current_time  # Issued at time
                 }
-            
-            token = jwt.encode(payload, env('jwt_secret') , algorithm='HS256') #generate token  
 
+            token = jwt.encode(payload, env('jwt_secret') , algorithm='HS256') #generate token  
+            
             response = Response()
             response.set_cookie(key='token', value=token, httponly=True,secure=True, samesite='None')
             response.data = {'message':'Log in successfully'}
