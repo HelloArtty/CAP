@@ -17,8 +17,9 @@ GitHub.sublime-settings
 
 
 database.json
-DatabaseBackup.sql
-
+DB-Backup2.tar
+PlaceBackup.sql
+PostBackup.sql
 
 /back
 

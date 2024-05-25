@@ -1,5 +1,4 @@
 
 *.pyc
-*.pyc
-*.pyc
 /Backend/users/views/__pycache__
+Backend/PlaceBackup.sql

@@ -43,6 +43,12 @@ class SignUpSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 
+class CreateAdminSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Admin
+        fields = '__all__'
+
 class LogInSerializer(serializers.ModelSerializer):
     
     class Meta:
