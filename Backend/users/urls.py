@@ -9,6 +9,8 @@ urlpatterns = [
     path('sign-up', signup),
     path('log-in', login),
     path('log-out', logout),
+    path('create-admin',createAdmin),
+    path('admins',admins_list),
     
     # user
     path('users', users_list),
