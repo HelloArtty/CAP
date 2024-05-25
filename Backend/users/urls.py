@@ -9,6 +9,8 @@ urlpatterns = [
     path('sign-up', signup),
     path('log-in', login),
     path('log-out', logout),
+    path('create-admin',createAdmin),
+    path('admins',admins_list),
     
     # user
     path('users', users_list),
@@ -24,8 +26,8 @@ urlpatterns = [
     
     #post
     path('posts', posts_list),
-    path('posts-id', get_post_by_id),
-    path('posts-id',update_delete_post_by_id),
+    path('posts-id-get', get_post_by_id),
+    path('posts-id-mod',update_delete_post_by_id),
     path('posts-category', posts_by_category),
     path('posts-filter', posts_filter),
     path('posts-img', posts_by_img),
