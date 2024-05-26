@@ -102,7 +102,15 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000"
 ]
 
-CORS_ALLOWED_ALL_ORIGINS = True
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000",
+    "http://localhost:8000"
+]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:8000"
+]
+
 # SESSION_COOKIE_DOMAIN = "localhost"
 
 # Password validation
