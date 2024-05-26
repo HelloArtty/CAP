@@ -6,6 +6,7 @@ urlpatterns = [
     path('', index),
     
     # auth
+    path('csrf', get_csrf_token), #get csrf token (for login and sign up)
     path('sign-up', signup),
     path('log-in', login),
     path('log-out', logout),

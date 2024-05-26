@@ -110,6 +110,12 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:8000"
 ]
+CSRF_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_HTTPONLY = True
+
+CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
 
 # SESSION_COOKIE_DOMAIN = "localhost"
 

@@ -63,7 +63,7 @@ def signup(req):
             
                 token = jwt.encode(payload, env('jwt_secret') , algorithm='HS256')#generate token  
                 response = Response()
-                response.set_cookie(key='token', value=token, httponly=True,secure=True, samesite='None',path='/')
+                response.set_cookie(key='token', value=token, httponly=True,secure=True, samesite=None,path='/')
                 response.data = {'message':'User created successfully'}
                 response.status = status.HTTP_201_CREATED
                 
