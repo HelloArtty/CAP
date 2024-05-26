@@ -18,16 +18,19 @@ export default function Login() {
         };
     }, []);
 
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setLogin({
             ...login,
             [e.target.name]: e.target.value,
         });
     };
+
     const loginUser = {
         email: login.email,
         password: login.password,
     };
+
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {

@@ -122,7 +122,7 @@ export default function Post() {
                                 <input
                                     type="text"
                                     placeholder="Search"
-                                    className="flex-grow p-2 rounded-l-lg border border-gray-300 focus:outline-none"
+                                    className="flex-grow p-2 rounded-lg border border-gray-300 focus:outline-none"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -184,10 +184,14 @@ export default function Post() {
             <div className="bg-blue-500 p-4 md:p-8">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {loading ? (
-                        <p className="text-xl text-slate-700 text-center w-full">Loading...</p>
+                        <p className="text-xl text-slate-700 text-center w-full">
+                            Loading...
+                        </p>
                     ) : (
                         posts.length === 0 ? (
-                            <p className="text-xl font-semibold text-slate-700">No posts found!</p>
+                            <p className="text-xl font-semibold text-slate-700">
+                                No posts found!
+                            </p>
                         ) : (
                             posts.map((post) => (
                                 <PostList key={post.id} post={post} />

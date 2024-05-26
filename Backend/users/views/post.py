@@ -1,10 +1,11 @@
 import cloudinary
 import cloudinary.uploader
 import environ
+
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from users.decorators import allowed_users
+
 from users.models import Post
 from users.serializers import PostJoinSerializer, PostSerializer
 
