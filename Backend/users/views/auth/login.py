@@ -50,7 +50,7 @@ def login(req):
             token = jwt.encode(payload, env('jwt_secret') , algorithm='HS256') #generate token  
             
             response = Response()
-            response.set_cookie(key='token', value=token, httponly=True,secure=True, samesite='None')
+            response.set_cookie(key='token', value=token, httponly=True,secure=True, samesite='None',path='/')
             response.data = {'message':'Log in successfully'}
             response.status = status.HTTP_200_OK
             
