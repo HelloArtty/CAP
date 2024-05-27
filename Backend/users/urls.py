@@ -10,6 +10,7 @@ urlpatterns = [
     path('sign-up', signup),
     path('log-in', login),
     path('log-out', logout),
+    path('verify-token', verifyToken),
 
     
     # user

@@ -11,5 +11,6 @@ from .auth.login import *
 from .auth.logout import *
 from .auth.createAdmin import *
 from .auth.admins import *
+from .auth.verifyToken import *
 
 

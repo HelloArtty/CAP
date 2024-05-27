@@ -1,12 +1,13 @@
 import cloudinary
 import cloudinary.uploader
 import environ
+import jwt
 
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from users.models import Post
+from users.models import Post,User
 from users.serializers import PostJoinSerializer, PostSerializer
 
 from users.decorators import allowed_users
@@ -33,6 +34,13 @@ def add_post(req):
         upload_result = cloudinary.uploader.upload(req.FILES['image']) # if get as json,  use -> req.data['image']
         img_path = upload_result['secure_url']
         req.data['image'] = img_path
+        
+        # get adminID from token
+        env = environ.Env()
+        token = req.COOKIES.get('token')
+        payload = jwt.decode(token, env('JWT_SECRET'), algorithms=['HS256'], leeway=60)
+        user = User.objects.filter(userID=payload['id']).first
+        req.data['adminID'] = user.userID
         
         serializer = PostSerializer(data=req.data)
         if serializer.is_valid():
