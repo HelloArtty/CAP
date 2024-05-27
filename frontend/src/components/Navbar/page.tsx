@@ -1,34 +1,22 @@
-import AxiosLib from '@/app/lib/axiosInstance';
-import { useState } from 'react';
+import Link from 'next/link';
 
-const LogoutButton = () => {
-    const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogout = async () => {
-        setIsLoading(true);
-        try {
-            await AxiosLib.post('/user-api/log-out');
-            localStorage.removeItem('token');
-            window.location.href = '/login';
-        } catch (error) {
-            console.error('Logout failed:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+
+export default function Navbar() {
+
+    
+
 
     return (
-        <button
-            className="w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-700"
-            onClick={handleLogout}
-            disabled={isLoading}
-        >
-            {isLoading ? 'Logging out...' : 'Logout'}
-        </button>
+        <nav className="bg-white border-gray-200 dark:bg-gray-900">
+            <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+                <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+                    <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Finder</span>
+                </Link>
+                <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+
+                </div>
+            </div>
+        </nav>
     );
-};
-
-
-export default LogoutButton;
-
-
+}

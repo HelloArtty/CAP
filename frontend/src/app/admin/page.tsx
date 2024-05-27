@@ -1,18 +1,11 @@
 "use client";
+import { useEffect } from 'react';
 
 export default function Admin() {
 
-    // useEffect(() => {
-    //     const isAdmin = checkIfUserIsAdmin();
-    //     if (!isAdmin) {
-    //         history.back();
-    //     }
-    // }, []);
-
-    // const checkIfUserIsAdmin = () => {
-    //     const userRole = localStorage.getItem('userRole');
-    //     return userRole === 'admin';
-    // };
+    useEffect(() => {
+        document.title = 'Admin';
+    }, []);
 
     return (
         <>
