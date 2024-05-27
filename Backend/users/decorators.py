@@ -3,15 +3,17 @@ import environ
 
 from rest_framework.response import Response
 from rest_framework import status
-
-from users.models import User,Admin
+from functools import wraps
+from users.models import User
 
 def allowed_users(allowed_roles=[]):   
     def decorator(view_func):
+        @wraps(view_func)
         def wrapper_func(request,*args, **kwargs):
+            token = request.COOKIES.get('token')
             try:
                 env = environ.Env()
-                token = request.COOKIES.get('token')
+                
                 # check if user is login
                 print("token",token)
                 if token == None:
@@ -44,33 +46,3 @@ def allowed_users(allowed_roles=[]):
     
         return wrapper_func
     return decorator
-
-# not use yet
-def is_login(view_func):
-    def wrapper_func(request,*args, **kwargs):
-
-        try:
-            env = environ.Env()
-            token = request.COOKIES.get('token')
-            
-            if token == None: # check if user is login
-                return view_func(request, *args, **kwargs) #if not login, return log in funtion
-                
-            # Decode the token (with leeway to allow for clock skew)
-            payload = jwt.decode(token, env('JWT_SECRET'), algorithms=['HS256'], leeway=60)
-
-            isAdmin = Admin.objects.filter(adminID=payload['id']).exists()
-            isUser = User.objects.filter(userID=payload['id']).exists()
-            if isAdmin or isUser:
-                return view_func(token,request, *args, **kwargs)
-            else:
-                return Response(data={'message':'Invalid token'}, status=status.HTTP_404_NOT_FOUND)
-
-        except jwt.ExpiredSignatureError:
-            return Response(data={'error': 'Token has expired'}, status=status.HTTP_401_UNAUTHORIZED)
-        except jwt.InvalidTokenError as error:
-            return Response(data={'error': f'Invalid token: {str(error)}'}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as error:
-            return Response(data={'error': f'Error at @is_login: {str(error)}'}, status=status.HTTP_400_BAD_REQUEST)
-
-    return wrapper_func

@@ -44,7 +44,7 @@ class Post(models.Model):
     title = models.CharField(max_length=256, default="Lost item")
     categoryID = models.ForeignKey(Category, on_delete=models.CASCADE,related_name="cate")
     placeID = models.ForeignKey(Place, on_delete=models.CASCADE,related_name="place")
-    adminID = models.ForeignKey(Admin, on_delete=models.CASCADE,related_name="admin")
+    adminID = models.ForeignKey(User, on_delete=models.CASCADE,related_name="admin")
     itemDetail = models.TextField()
     placeDetail = models.TextField()
     image =  models.CharField(max_length=256) #CloudinaryField('image')

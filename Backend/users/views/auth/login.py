@@ -19,7 +19,12 @@ def login(req):
     if token != None: # check if user is login
         payload = jwt.decode(token, env('JWT_SECRET'), algorithms=['HS256'], leeway=60)
         if User.objects.filter(userID=payload['id']).exists(): # asure token is valid
-            return Response(data={'message':'User is already logged in'}, status=status.HTTP_200_OK)
+            
+            response = Response()
+            response.set_cookie(key='token', value=token, httponly=True, secure=False, samesite=None, path='/',domain='localhost')
+            response.data = {'message':'User is already logged in'}
+            response.status = status.HTTP_200_OK
+            return response
 
     if req.method == 'POST': # if user is not login, check email and password
         try:
@@ -29,8 +34,6 @@ def login(req):
             user = User.objects.filter(email=email).first() #first object in the database that match
             if user == None: #check if email exists in user table
                 return Response(data={'message':'User Not Found'}, status=status.HTTP_400_BAD_REQUEST)
-            
-
 
             if not MatchingPassword(password, user.password):  # check if password is correct
                 return Response(data={'message': 'Incorrect Password'}, status=status.HTTP_400_BAD_REQUEST)
