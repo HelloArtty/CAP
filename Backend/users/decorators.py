@@ -3,15 +3,17 @@ import environ
 
 from rest_framework.response import Response
 from rest_framework import status
-
+from functools import wraps
 from users.models import User
 
 def allowed_users(allowed_roles=[]):   
     def decorator(view_func):
+        @wraps(view_func)
         def wrapper_func(request,*args, **kwargs):
+            token = request.COOKIES.get('token')
             try:
                 env = environ.Env()
-                token = request.COOKIES.get('token')
+                
                 # check if user is login
                 print("token",token)
                 if token == None:

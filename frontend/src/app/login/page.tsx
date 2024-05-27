@@ -4,9 +4,10 @@ import { TextField } from "@mui/material";
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const router = useRouter();
   const [login, setLogin] = useState({
     email: "",
     password: "",
@@ -32,19 +33,13 @@ export default function Login() {
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    const router = useRouter();
     e.preventDefault();
     try {
-      const result = await AxiosLib.post("/user-api/log-in", loginUser, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
-      if (result.status === 200) return (window.location.href = "/search");
+      const result = await AxiosLib.post("/user-api/log-in", loginUser);
+
+      if (result.status === 200) return router.push("/search"); //(window.location.href = "/search");
       console.log(result);
     } catch (error) {
-      router.push("/login");
       console.log(error);
     }
   };

@@ -6,31 +6,6 @@ import { updateURLParams } from "@/app/utils/utils";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar/page";
-import { useRouter } from "next/navigation";
-
-async function getPosts() {
-  try {
-    const res = await AxiosLib.get("/user-api/posts");
-    const data = res.data;
-    return Array.isArray(data) ? data : [];
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-}
-
-async function getFilterPosts(searchQuery: string) {
-  try {
-    const res = await AxiosLib.get(`/user-api/posts-filter?${searchQuery}`);
-    const data = res.data;
-    return Array.isArray(data) ? data : [];
-  } catch (err) {
-    const router = useRouter();
-    console.error(err);
-    router.push("/login");
-    return [];
-  }
-}
 
 export default function Post() {
   const [posts, setPosts] = useState<Array<any>>([]);
@@ -40,6 +15,33 @@ export default function Post() {
   const [category, setCategory] = useState("");
   const [location, setLocation] = useState("");
   const [asc, setAsc] = useState(true);
+
+  async function getPosts() {
+    try {
+      const res = await AxiosLib.get("/user-api/posts", {
+        withCredentials: true,
+      });
+      const data = res.data;
+      return Array.isArray(data) ? data : [];
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  }
+
+  async function getFilterPosts(searchQuery: string) {
+    try {
+      const res = await AxiosLib.get(`/user-api/posts-filter?${searchQuery}`, {
+        withCredentials: true,
+      });
+      const data = res.data;
+      return Array.isArray(data) ? data : [];
+    } catch (err) {
+      console.error(err);
+
+      return [];
+    }
+  }
 
   const fetchData = async (searchQuery = "") => {
     setLoading(true);
