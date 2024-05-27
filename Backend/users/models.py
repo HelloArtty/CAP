@@ -9,7 +9,7 @@ class User(models.Model):
     email = models.CharField(max_length=100, validators=[validate_email])
     tel = models.CharField(max_length=20)
     password = models.CharField(max_length=256)
-    
+    isAdmin = models.BooleanField()
     def __str__(self):
         return self.name
 
@@ -48,7 +48,7 @@ class Post(models.Model):
     itemDetail = models.TextField()
     placeDetail = models.TextField()
     image =  models.CharField(max_length=256) #CloudinaryField('image')
-    datePost = models.DateTimeField()
+    datePost = models.DateTimeField(default=False)
     
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''

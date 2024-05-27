@@ -6,12 +6,14 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
+from .PasswordManagement import HashingPassword
+
 #-------------------------------------- users
 @api_view(['GET', 'POST'])
-def users_list(request):
+def users_list(req):
 
     #GET all users
-    if request.method == 'GET':
+    if req.method == 'GET':
         #get all user from .model
         users = User.objects.all()   
         #serialize them
@@ -19,8 +21,9 @@ def users_list(request):
         #return json
         return Response(serializer.data)
     #POST a new user
-    elif request.method == 'POST':
-        serializer = UserSerializer(data=request.data)
+    elif req.method == 'POST':
+        req.data['password'] = HashingPassword(req.data['password']) #hashing password
+        serializer = UserSerializer(data=req.data)
         if serializer.is_valid():
             serializer.save()
             return Response(data={'message':'User created successfully','info':serializer.data}, status=status.HTTP_201_CREATED)

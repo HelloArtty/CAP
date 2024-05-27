@@ -6,12 +6,11 @@ urlpatterns = [
     path('', index),
     
     # auth
-    path('csrf', get_csrf_token), #get csrf token (for login and sign up)
+    
     path('sign-up', signup),
     path('log-in', login),
     path('log-out', logout),
-    path('create-admin',createAdmin),
-    path('admins',admins_list),
+
     
     # user
     path('users', users_list),
@@ -27,6 +26,7 @@ urlpatterns = [
     
     #post
     path('posts', posts_list),
+    path('posts-add', add_post),
     path('posts-id-get', get_post_by_id),
     path('posts-id-mod',update_delete_post_by_id),
     path('posts-category', posts_by_category),

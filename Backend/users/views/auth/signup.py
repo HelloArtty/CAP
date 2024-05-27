@@ -48,7 +48,9 @@ def signup(req):
         
         req.data['password'] = HashingPassword(req.data['password']) #hashing password
         
-        serializer = SignUpSerializer(data=req.data)
+        data = req.data
+        data["isAdmin"] = False
+        serializer = SignUpSerializer(data=data)
         if serializer.is_valid(): 
             try:
                 serializer.save()
@@ -63,7 +65,7 @@ def signup(req):
             
                 token = jwt.encode(payload, env('jwt_secret') , algorithm='HS256')#generate token  
                 response = Response()
-                response.set_cookie(key='token', value=token, httponly=True,secure=True, samesite=None,path='/')
+                response.set_cookie(key='token', value=token, httponly=True,secure=False, samesite='Lax',path='/')
                 response.data = {'message':'User created successfully'}
                 response.status = status.HTTP_201_CREATED
                 

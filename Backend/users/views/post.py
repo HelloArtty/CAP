@@ -13,16 +13,22 @@ from users.decorators import allowed_users
 
 env = environ.Env()
 
-#-------------------------------------- item
 
-@api_view(['GET', 'POST'])
+# post CRUD ------------------------------------------------------------------------- 
+@api_view(['GET'])
+@allowed_users(allowed_roles=['user','admin'])
 def posts_list(req):
-    
-    if req.method == 'GET':
+    try:
         posts_query = Post.objects.select_related('categoryID', 'placeID', 'adminID').all()
         serializer = PostJoinSerializer(posts_query, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    elif req.method == 'POST':
+    except Exception as error:
+        return Response(data={'Error at posts_list':str(error)}, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+    
+@api_view(['POST'])
+@allowed_users(allowed_roles=['admin'])
+def add_post(req):
+    try:
         # get full image url
         upload_result = cloudinary.uploader.upload(req.FILES['image']) # if get as json,  use -> req.data['image']
         img_path = upload_result['secure_url']
@@ -31,9 +37,9 @@ def posts_list(req):
         serializer = PostSerializer(data=req.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    except Exception as error:
+        return Response(data={'Error at add_post':str(error)}, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
 @allowed_users(allowed_roles=['user','admin'])
@@ -42,7 +48,6 @@ def get_post_by_id(req):
     try:
         id = req.query_params.get('id',None)
         post_query = Post.objects.get(pk=id)
-
     except Post.DoesNotExist:
         return Response("Post ID not found", status=status.HTTP_404_NOT_FOUND)
     
@@ -63,8 +68,6 @@ def update_delete_post_by_id(req):
         return Response("Post ID not found", status=status.HTTP_404_NOT_FOUND)
     
     if req.method == 'PUT':
-        
-        
         imgPublicID = post_query.image.split('/')[-1].split('.')[0] 
         cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload") # delete old image from cloudinary
         
@@ -89,7 +92,7 @@ def update_delete_post_by_id(req):
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-
+# search ------------------------------------------------------------------------- 
 @api_view(['GET'])
 def posts_by_category(req):
     try:
@@ -105,6 +108,7 @@ def posts_by_category(req):
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
+@allowed_users(allowed_roles=['user','admin'])
 def posts_filter(req):
     try:
         search = req.query_params.get('search',None)
@@ -138,7 +142,6 @@ def posts_filter(req):
     
     except Exception as error:
         return Response(data={'Error at posts_filter':str(error)}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 from users.Model import callModel
