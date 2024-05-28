@@ -46,10 +46,12 @@ export default function Login() {
       await AxiosLib.post('/user-api/log-in', loginUser).then((res) => {
         if (res.status === 200) {
           localStorage.setItem('token', res.data.token);
+          localStorage.setItem('username', res.data.username);
+          localStorage.setItem('role', res.data.role);
           console.log(res.data.token);
+          console.log(res.data.username);
+          console.log(res.data.role);
           console.log(res);
-          
-          localStorage.setItem('email', res.data.email);
           router.push('/search');
         }
       });

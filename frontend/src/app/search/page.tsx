@@ -139,7 +139,6 @@ export default function Post() {
                                     value={category}
                                 >
                                     <option value="">Select Category</option>
-                                    <option value="">Select Category</option>
                                     <option value="0">Apple Pencil</option>
                                     <option value="1">Bag</option>
                                     <option value="2">Calculator</option>

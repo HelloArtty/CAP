@@ -6,7 +6,7 @@ import { IoLocation } from "react-icons/io5";
 
 export default function PostList({ post }: { post: any }) {
     const formatDate = (dateString: string) => {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
@@ -16,18 +16,17 @@ export default function PostList({ post }: { post: any }) {
                 <div className="w-80 bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105">
                     <img
                         className="w-full h-64 aspect-square object-cover object-center"
-                        src={post.image}
-                        alt={post.title}
+                        src={post?.image}
                     />
                     <div className="p-6">
-                        <h1 className="text-2xl font-semibold text-gray-800 line-clamp-1">{post.title}</h1>
+                        <h1 className="text-2xl font-semibold text-gray-800 line-clamp-1">{post?.title}</h1>
                         <div className="flex items-center pt-2 text-gray-600">
                             <FaRegCalendarAlt className="mr-2" />
-                            <p>{formatDate(post.datePost)}</p>
+                            <p>{formatDate(post?.datePost)}</p>
                         </div>
                         <div className="flex items-center pt-2 text-gray-600">
                             <IoLocation className="mr-2" />
-                            <p className="line-clamp-1">{post.placeID.placeName}</p>
+                            <p className="line-clamp-1">{post?.placeID.placeName}</p>
                         </div>
                     </div>
                 </div>

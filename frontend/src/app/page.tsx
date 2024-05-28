@@ -77,7 +77,8 @@ export default function Home() {
                     placeholder="Find what you're looking for right here....."
                     className="flex-grow p-2 focus:outline-none"
                   />
-                  <div className="px-4 py-2 bg-white rounded-r-lg cursor-pointer" onClick={() => document.getElementById('fileInput')?.click()}>
+                  <div className="px-4 py-2 bg-white rounded-r-lg cursor-pointer"
+                    onClick={() => document.getElementById('fileInput')?.click()}>
                     <FontAwesomeIcon icon={faCamera} size="2x" className="text-gray-600" />
                     <input
                       id="fileInput"
