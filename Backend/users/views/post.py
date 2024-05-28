@@ -41,11 +41,11 @@ def add_post(req):
         req.data['image'] = img_path
         
         # get adminID from token
-        env = environ.Env()
-        token = req.COOKIES.get('token')
+        '''env = environ.Env()
+        token = req.COOKIES.get('token')'''
+        token = req.data['adminID']
         payload = jwt.decode(token, env('JWT_SECRET'), algorithms=['HS256'], leeway=60)
-        user = User.objects.filter(userID=payload['id']).first
-        req.data['adminID'] = user.userID
+        req.data['adminID'] = payload['id']
         
         serializer = PostSerializer(data=req.data)
         if serializer.is_valid():
@@ -169,7 +169,6 @@ from users.Model import callModel
 def posts_by_img(req):
     
     if req.method == 'POST':
-        print("post_by_img_func")
         try:
             
             upload_result = cloudinary.uploader.upload(req.FILES['file'], public_id = 'temp_img') #upload image to cloudinary
