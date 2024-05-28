@@ -24,6 +24,7 @@ import datetime
 def posts_list(req):
     try:
         posts_query = Post.objects.select_related('categoryID', 'placeID', 'adminID').all()
+        posts_query = posts_query.order_by('-datePost__date','-datePost__hour', '-datePost__minute')
         serializer = PostJoinSerializer(posts_query, many=True)
     except Exception as error:
         return Response(data={'Error at posts_list':str(error)}, status=status.HTTP_400_BAD_REQUEST)
