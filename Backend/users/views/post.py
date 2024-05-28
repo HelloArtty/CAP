@@ -144,7 +144,7 @@ def posts_filter(req):
         if place_id:
             posts_query = posts_query.filter(placeID=place_id)
             
-        if asc:
+        if asc =='false':
             posts_query = posts_query.order_by('datePost__date','datePost__hour', 'datePost__minute')
         else: 
             posts_query = posts_query.order_by('-datePost__date','-datePost__hour', '-datePost__minute')
