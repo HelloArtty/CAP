@@ -13,13 +13,19 @@ export default function Register() {
     password: '',
     confirmPassword: '',
   });
-
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
-        document.body.style.overflow = 'auto';
+      document.body.style.overflow = 'auto';
     };
-}, []);
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      window.location.href = '/search';
+    }
+  });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setRegister((prevRegister) => ({

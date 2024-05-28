@@ -4,8 +4,16 @@ import { useEffect } from 'react';
 export default function Admin() {
 
     useEffect(() => {
-        document.title = 'Admin';
+        const isAdmin = checkIfUserIsAdmin();
+        if (!isAdmin) {
+            history.back();
+        }
     }, []);
+
+    const checkIfUserIsAdmin = () => {
+        const userRole = localStorage.getItem('userRole');
+        return userRole === 'admin';
+    };
 
     return (
         <>

@@ -5,7 +5,6 @@ export const ContextValue = {
     email: '',
     tel:'',
     password: '',
-    // confirmPassword: '',
 };
 
 export const AuthContext = createContext(null);

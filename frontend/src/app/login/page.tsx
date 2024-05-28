@@ -1,22 +1,34 @@
 "use client";
-import AxiosLib from "@/app/lib/axiosInstance";
 import { TextField } from "@mui/material";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
+import AxiosLib from "../lib/axiosInstance";
 
 export default function Login() {
-  const router = useRouter();
   const [login, setLogin] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
 
+  const loginUser = {
+    email: login.email,
+    password: login.password,
+  };
+  const router = useRouter();
+
   useEffect(() => {
-    document.body.style.overflow = "hidden";
+    const token = localStorage.getItem('token');
+    if (token) {
+      router.push('/search');
+    }
+  }, [router]);
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     };
   }, []);
 
@@ -27,22 +39,31 @@ export default function Login() {
     });
   };
 
-  const loginUser = {
-    email: login.email,
-    password: login.password,
-  };
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const result = await AxiosLib.post("/user-api/log-in", loginUser);
 
-      if (result.status === 200) return router.push("/search"); //(window.location.href = "/search");
-      console.log(result);
+      await AxiosLib.post('/user-api/log-in', loginUser).then((res) => {
+        if (res.status === 200) {
+          localStorage.setItem('token', res.data.token);
+          console.log(res.data.token);
+          console.log(res);
+          
+          localStorage.setItem('email', res.data.email);
+          router.push('/search');
+        }
+      });
     } catch (error) {
-      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Email or Password is incorrect',
+      })
+      console.log(error)
     }
-  };
+  }
+
+
 
   return (
     <>
