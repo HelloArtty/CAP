@@ -44,11 +44,11 @@ export default function CreatePostPage() {
         }
     };
 
-    const onSubmit = async (data :any) => {
+    const onSubmit = async (data : any) => {
         const postData = new FormData();
         postData.append('categoryID', data.category);
         postData.append('placeID', data.location);
-        postData.append('adminID', adminID);
+        postData.append('adminID', adminID); // Ensure adminID is defined and valid
         postData.append('title', data.title);
         postData.append('itemDetail', data.description);
         postData.append('placeDetail', data.placedetail);
@@ -56,7 +56,8 @@ export default function CreatePostPage() {
             postData.append('image', selectedImage);
             console.log(selectedImage);
         }
-        console.log(data);
+        console.log("Form data:", data);
+        console.log("FormData entries:", Array.from(postData.entries()));
     
         try {
             const createdPost = await createPost(postData);
