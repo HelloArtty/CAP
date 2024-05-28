@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from functools import wraps
 from users.models import User
+import json
 
 def allowed_users(allowed_roles=[]):   
     def decorator(view_func):
@@ -14,6 +15,7 @@ def allowed_users(allowed_roles=[]):
                 env = environ.Env()
                 token = request.COOKIES.get('token')  # Corrected attribute name
                 # check if user is logged in
+                print(token)
                 if token is None:
                     print("Token not found")
                     return Response(data={'message': 'Log in is required'}, status=status.HTTP_401_UNAUTHORIZED)

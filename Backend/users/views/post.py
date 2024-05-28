@@ -11,13 +11,16 @@ from users.models import Post,User
 from users.serializers import PostJoinSerializer, PostSerializer
 
 from users.decorators import allowed_users
+from django.views.decorators.csrf import csrf_exempt
 
 env = environ.Env()
 
 
 # post CRUD ------------------------------------------------------------------------- 
+
 @api_view(['GET'])
-#@allowed_users(allowed_roles=[])
+# @allowed_users(allowed_roles=['user','admin'])
+# @csrf_exempt
 def posts_list(req):
     try:
         posts_query = Post.objects.select_related('categoryID', 'placeID', 'adminID').all()
@@ -25,9 +28,11 @@ def posts_list(req):
     except Exception as error:
         return Response(data={'Error at posts_list':str(error)}, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+
 @api_view(['POST'])
-#@allowed_users(allowed_roles=['admin'])
+# @allowed_users(allowed_roles=['admin'])
+# @csrf_exempt
 def add_post(req):
     try:
         # get full image url
@@ -36,11 +41,11 @@ def add_post(req):
         req.data['image'] = img_path
         
         # get adminID from token
-        env = environ.Env()
-        token = req.COOKIES.get('token')
+        '''env = environ.Env()
+        token = req.COOKIES.get('token')'''
+        token = req.data['adminID']
         payload = jwt.decode(token, env('JWT_SECRET'), algorithms=['HS256'], leeway=60)
-        user = User.objects.filter(userID=payload['id']).first
-        req.data['adminID'] = user.userID
+        req.data['adminID'] = payload['id']
         
         serializer = PostSerializer(data=req.data)
         if serializer.is_valid():
@@ -50,7 +55,8 @@ def add_post(req):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
-#@allowed_users(allowed_roles=['user','admin'])
+# @allowed_users(allowed_roles=['user','admin'])
+# @csrf_exempt
 def get_post_by_id(req):
     
     try:
@@ -65,7 +71,8 @@ def get_post_by_id(req):
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['PUT', 'DELETE'])
-#@allowed_users(allowed_roles=['admin'])
+# @allowed_users(allowed_roles=['admin'])
+# @csrf_exempt
 def update_delete_post_by_id(req):
     
     try:
@@ -102,6 +109,7 @@ def update_delete_post_by_id(req):
 
 # search ------------------------------------------------------------------------- 
 @api_view(['GET'])
+# @csrf_exempt
 def posts_by_category(req):
     try:
         cate_id = req.query_params.get('cate_id',None)
@@ -116,7 +124,8 @@ def posts_by_category(req):
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
-#@allowed_users(allowed_roles=[])
+# @allowed_users(allowed_roles=['user'])
+# @csrf_exempt
 def posts_filter(req):
     try:
         search = req.query_params.get('search',None)
@@ -156,10 +165,10 @@ from users.Model import callModel
 
 
 @api_view(['GET','POST'])
+# @csrf_exempt
 def posts_by_img(req):
     
     if req.method == 'POST':
-        print("post_by_img_func")
         try:
             
             upload_result = cloudinary.uploader.upload(req.FILES['file'], public_id = 'temp_img') #upload image to cloudinary

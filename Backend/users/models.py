@@ -48,7 +48,7 @@ class Post(models.Model):
     itemDetail = models.TextField()
     placeDetail = models.TextField()
     image =  models.CharField(max_length=256) #CloudinaryField('image')
-    datePost = models.DateTimeField(default=False)
+    datePost = models.DateTimeField(auto_now_add=True)
     
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''

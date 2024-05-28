@@ -65,8 +65,11 @@ def signup(req):
             
                 token = jwt.encode(payload, env('jwt_secret') , algorithm='HS256')#generate token  
                 response = Response()
-                response.set_cookie(key='token', value=token, httponly=True,secure=False, samesite='Lax',path='/')
-                response.data = {'message':'User created successfully'}
+                response.set_cookie(key='token', value=token, httponly=True, secure=False, samesite=None, path='/',domain='localhost')
+                response.data = {'message':'User created successfully',
+                                'token': token,
+                                'username': user.name,
+                                'role': 'user'}
                 response.status = status.HTTP_201_CREATED
                 
             except Exception as error:
