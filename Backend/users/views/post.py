@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 env = environ.Env()
 
-
+import datetime
 # post CRUD ------------------------------------------------------------------------- 
 
 @api_view(['GET'])
@@ -40,13 +40,14 @@ def add_post(req):
         img_path = upload_result['secure_url']
         req.data['image'] = img_path
         
-        # get adminID from token
+        # get adminID from token (in case)
         '''env = environ.Env()
-        token = req.COOKIES.get('token')'''
-        token = req.data['adminID']
+        token = req.COOKIES.get('token') #get by token cookie
+        token = req.data['adminID'] # get token by req
         payload = jwt.decode(token, env('JWT_SECRET'), algorithms=['HS256'], leeway=60)
-        req.data['adminID'] = payload['id']
-        
+        req.data['adminID'] = payload['id']'''
+        data = req.data
+        data['datePost'] = datetime.datetime.now()
         serializer = PostSerializer(data=req.data)
         if serializer.is_valid():
             serializer.save()
