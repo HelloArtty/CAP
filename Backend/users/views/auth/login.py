@@ -18,15 +18,19 @@ def login(req):
     # is_login function        
     if token != None: # check if user is login
         payload = jwt.decode(token, env('JWT_SECRET'), algorithms=['HS256'], leeway=60)
-        if User.objects.filter(userID=payload['id']).exists(): # asure token is valid
+        user =User.objects.filter(userID=payload['id']).first()
+        if user.exists(): # asure token is valid
             
             response = Response()
-            response.set_cookie(key='token', value=token, httponly=True, secure=False, samesite=None, path='/',domain='localhost')
-            response.data = {'message':'User is already logged in'}
+            #response.set_cookie(key='token', value=token, httponly=True, secure=False, samesite=None, path='/',domain='localhost')
+            response.data = {'message':'User is already logged in',
+                                'token': token,
+                                'username': user.name,
+                                'role' : 'user' if user.isAdmin == False else 'admin'
+                            }
             response.status = status.HTTP_200_OK
             return response
-
-    if req.method == 'POST': # if user is not login, check email and password
+    else:
         try:
             email = req.data['email']
             password = req.data['password']  
@@ -49,8 +53,13 @@ def login(req):
             
             response = Response()
             response.set_cookie(key='token', value=token, httponly=True, secure=False, samesite=None, path='/')
-            response.data = {'message':'Log in successfully'}
+            response.data = {'message':'Log in successfully',
+                                'token': token,
+                                'username': user.name,
+                                'role': 'user' if user.isAdmin == False else 'admin'
+                                }
             response.status = status.HTTP_200_OK
+        
             
         except Exception as error:
             return Response(data={'message': "Python error : "+ str(error) }, status=status.HTTP_400_BAD_REQUEST)

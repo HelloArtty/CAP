@@ -97,7 +97,7 @@ DATABASES = {
 }
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_ALLOW_ALL = False  # Set to True for testing purposes
+CORS_ORIGIN_ALLOW_ALL = True  # Set to True for testing purposes
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',  # Your Next.js front-end URL
 ]
