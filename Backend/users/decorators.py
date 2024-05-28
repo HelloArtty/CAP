@@ -9,33 +9,33 @@ from users.models import User
 def allowed_users(allowed_roles=[]):   
     def decorator(view_func):
         @wraps(view_func)
-        def wrapper_func(request,*args, **kwargs):
-            token = request.COOKIES.get('token')
+        def wrapper_func(request, *args, **kwargs):
             try:
                 env = environ.Env()
-                
-                # check if user is login
-                print("token",token)
-                if token == None:
-                    return Response(data={'message':'Log in is required'}, status=status.HTTP_401_UNAUTHORIZED)
+                token = request.COOKIES.get('token')  # Corrected attribute name
+                # check if user is logged in
+                if token is None:
+                    print("Token not found")
+                    return Response(data={'message': 'Log in is required'}, status=status.HTTP_401_UNAUTHORIZED)
                     
                 # Decode the token (with leeway to allow for clock skew)
                 payload = jwt.decode(token, env('JWT_SECRET'), algorithms=['HS256'], leeway=60)
 
                 user = User.objects.filter(userID=payload['id']).first()
-                print("isAdmin :",user.isAdmin)
-                print("isAdmin :",user.name)
+                print("User:", user)  # Add this line for logging
+                if user is None:
+                    print("User not found")
+                    return Response(data={'message': 'User not found'}, status=status.HTTP_401_UNAUTHORIZED)
+
                 if user.isAdmin:
-                    group = 'admin' # == admin
-                    print("ADMIN")
+                    group = 'admin'  # == admin
                 else:
-                    group = 'user' # == user
-                    print("USER")
+                    group = 'user'  # == user
                 
                 if group in allowed_roles:
                     return view_func(request, *args, **kwargs)
                 else:
-                    return Response(data={'message':'You are not authorized to access this page'}, status=status.HTTP_401_UNAUTHORIZED)
+                    return Response(data={'message': 'You are not authorized to access this page'}, status=status.HTTP_401_UNAUTHORIZED)
             
             except jwt.ExpiredSignatureError:
                 return Response(data={'error': 'Token has expired'}, status=status.HTTP_401_UNAUTHORIZED)

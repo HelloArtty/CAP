@@ -17,7 +17,7 @@ env = environ.Env()
 
 # post CRUD ------------------------------------------------------------------------- 
 @api_view(['GET'])
-@allowed_users(allowed_roles=['user','admin'])
+#@allowed_users(allowed_roles=[])
 def posts_list(req):
     try:
         posts_query = Post.objects.select_related('categoryID', 'placeID', 'adminID').all()
@@ -27,7 +27,7 @@ def posts_list(req):
     return Response(serializer.data, status=status.HTTP_200_OK)
     
 @api_view(['POST'])
-@allowed_users(allowed_roles=['admin'])
+#@allowed_users(allowed_roles=['admin'])
 def add_post(req):
     try:
         # get full image url
@@ -50,7 +50,7 @@ def add_post(req):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
-@allowed_users(allowed_roles=['user','admin'])
+#@allowed_users(allowed_roles=['user','admin'])
 def get_post_by_id(req):
     
     try:
@@ -65,7 +65,7 @@ def get_post_by_id(req):
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['PUT', 'DELETE'])
-@allowed_users(allowed_roles=['admin'])
+#@allowed_users(allowed_roles=['admin'])
 def update_delete_post_by_id(req):
     
     try:
@@ -116,7 +116,7 @@ def posts_by_category(req):
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
-@allowed_users(allowed_roles=['user','admin'])
+#@allowed_users(allowed_roles=[])
 def posts_filter(req):
     try:
         search = req.query_params.get('search',None)
