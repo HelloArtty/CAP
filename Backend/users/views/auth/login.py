@@ -18,11 +18,11 @@ def login(req):
     # is_login function        
     if token != None: # check if user is login
         payload = jwt.decode(token, env('JWT_SECRET'), algorithms=['HS256'], leeway=60)
-        user =User.objects.filter(userID=payload['id']).first()
-        if user.exists(): # asure token is valid
+        user = User.objects.filter(userID=payload['id']).first()
+        if user: # asure token is valid
             
             response = Response()
-            #response.set_cookie(key='token', value=token, httponly=True, secure=False, samesite=None, path='/',domain='localhost')
+            response.set_cookie(key='token', value=token, httponly=True, secure=False, samesite=None, path='/',domain='localhost')
             response.data = {'message':'User is already logged in',
                                 'token': token,
                                 'username': user.name,
