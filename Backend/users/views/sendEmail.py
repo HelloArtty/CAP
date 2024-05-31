@@ -1,10 +1,9 @@
-from django.core.mail import BadHeaderError, EmailMessage
+from django.core.mail import EmailMessage
 
 from rest_framework.decorators import api_view 
 from rest_framework.response import Response
 from rest_framework import status
 
-from users.models import User
 import environ
 
 env = environ.Env()
