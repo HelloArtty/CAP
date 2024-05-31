@@ -33,5 +33,6 @@ urlpatterns = [
     path('posts-category', posts_by_category),
     path('posts-filter', posts_filter),
     path('posts-img', posts_by_img),
+    path('send-email', send_email),
     
 ]

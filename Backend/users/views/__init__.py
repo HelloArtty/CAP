@@ -4,6 +4,7 @@ from .users import *
 from .categories import *
 from .places import *
 from .post import *
+from .sendEmail import *
 # from .requests import *
 
 from .auth.signup import *
