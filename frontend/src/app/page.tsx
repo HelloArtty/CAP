@@ -75,7 +75,7 @@ export default function Home() {
                   <input
                     type="text"
                     placeholder="Find what you're looking for right here....."
-                    className="flex-grow p-2 focus:outline-none"
+                    className="flex-grow p-2 focus:outline-none border-none"
                   />
                   <div className="px-4 py-2 bg-white rounded-r-lg cursor-pointer"
                     onClick={() => document.getElementById('fileInput')?.click()}>

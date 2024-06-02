@@ -78,7 +78,7 @@ export default function Register() {
 
       const result = await AxiosLib.post('/user-api/sign-up', createNewUser);
       console.log(result);
-      if (result.status === 201) {
+      if (result.status === 200) {
         return (window.location.href = '/login');
       }
     } catch (error) {
@@ -93,7 +93,7 @@ export default function Register() {
   };
 
   return (
-    <>
+    <> 
       <div className="items-center justify-center flex min-h-screen w-full h-full">
         <div className="bg-blue-700 min-h-screen w-1/2 p-8 hidden md:block">
           <div className="p-8 min-h-screen items-center justify-center flex">

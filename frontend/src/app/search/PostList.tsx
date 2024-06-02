@@ -11,7 +11,7 @@ export default function PostList({ post }: { post: any }) {
     };
 
     return (
-        <Link href={`/post/${post.postID}`}>
+        <Link href={`/post/${post?.postID}`}>
             <div className="flex justify-center p-4">
                 <div className="w-80 bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105">
                     <img

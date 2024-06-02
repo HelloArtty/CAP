@@ -10,6 +10,14 @@ export default function Admin() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const postsPerPage = 6;
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+    
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
 
     useEffect(() => {
         const isAdmin = checkIfUserIsAdmin();
@@ -44,6 +52,15 @@ export default function Admin() {
                 <div className="flex justify-center h-1/2 p-10">
                     <h1 className="text-6xl font-bold">Admin</h1>
                 </div>
+                {posts.length > postsPerPage && (
+                    <div className="flex justify-center mt-4">
+                        {[...Array(Math.ceil(posts.length / postsPerPage))].map((_, index) => (
+                            <button key={index} onClick={() => paginate(index + 1)} className="mx-1 px-3 py-1 rounded bg-blue-500 text-white">
+                                {index + 1}
+                            </button>
+                        ))}
+                    </div>
+                )}
                 {loading ? (
                     <p className="text-xl text-center mt-4">Loading...</p>
                 ) : error ? (
@@ -61,7 +78,7 @@ export default function Admin() {
                                     <Table.HeadCell className="flex justify-center">Operation</Table.HeadCell>
                                 </Table.Head>
                                 <Table.Body className="divide-y">
-                                    {posts.map((post: any) => (
+                                    {currentPosts.map((post: any) => (
                                         <ItemList key={post.id} post={post} />
                                     ))}
                                 </Table.Body>
