@@ -59,7 +59,6 @@ def signup(req):
                 current_time = time.time()  # Current time in UTC
                 payload = {
                     'id': user.userID,
-                    'exp': current_time + 3600,  # Expiration time (1 hour from now)
                     'iat': current_time  # Issued at time
                 }
             
@@ -71,7 +70,9 @@ def signup(req):
                                 'username': user.name,
                                 'role': 'user'}
                 response.status = status.HTTP_201_CREATED
-                
+            
+            except jwt.ExpiredSignatureError:
+                return Response(data={'message':'Token is expired'}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as error:
                 return Response(data={'message':str(e) for e in error}, status=status.HTTP_400_BAD_REQUEST)
         else:
