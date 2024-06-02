@@ -3,6 +3,7 @@
 import AxiosLib from "@/app/lib/axiosInstance";
 import PostList from "@/app/search/PostList";
 import { updateURLParams } from "@/app/utils/utils";
+import LoadingPage from '@/components/Loading/page';
 import Navbar from '@/components/Navbar/page';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useEffect, useState } from 'react';
@@ -37,14 +38,23 @@ export default function Post() {
     const [category, setCategory] = useState('');
     const [location, setLocation] = useState('');
     const [asc, setAsc] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const postsPerPage = 12;
 
+    const postsPerPage = 12;
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
-    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+    const paginate = (pageNumber: number) => {
+        setIsLoading(true);
+        setCurrentPage(pageNumber);
+        window.scrollTo(0, 0);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 1000); // 1000 เป็นตัวอย่างเวลาที่ใช้ในการโหลด (ให้ปรับให้เป็นเวลาจริง)
+    };
+
 
 
 
@@ -245,10 +255,10 @@ export default function Post() {
                     </div>
 
                 </div>
-                <div className="container mx-auto p-4 md:p-8 ">
+                <div className="container mx-auto p-4 md:p-8">
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {loading ? (
-                            <p className="text-xl text-slate-700 text-center w-full">Loading...</p>
+                        {isLoading ? (
+                            <LoadingPage />
                         ) : (
                             posts.length === 0 ? (
                                 <p className="text-xl font-semibold text-slate-700">No posts found!</p>
@@ -259,7 +269,9 @@ export default function Post() {
                             )
                         )}
                     </div>
+
                 </div>
+
                 {posts.length > postsPerPage && (
                     <div className="flex justify-center mt-4">
                         {[...Array(Math.ceil(posts.length / postsPerPage))].map((_, index) => (

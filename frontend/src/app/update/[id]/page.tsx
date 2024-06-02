@@ -26,12 +26,6 @@ export default function UpdatePostPage() {
         if (post?.image) {
             setSelectedImage(post.image);
         }
-        if (post?.categoryID) {
-            setCategory(post.categoryID.categoryID);
-        }
-        if (post?.placeID) {
-            setLocation(post.placeID.placeID);
-        }
         setValue('title', post?.title);
         setValue('description', post?.itemDetail);
         setValue('placedetail', post?.placeDetail);
