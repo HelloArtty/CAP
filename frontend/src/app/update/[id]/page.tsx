@@ -1,50 +1,92 @@
-"use client"
+"use client";
 
 import AxiosLib from '@/app/lib/axiosInstance';
 import Navbar from '@/components/Navbar/page';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoCloudUploadOutline } from 'react-icons/io5';
 
-export default function CreatePostPage() {
+export default function UpdatePostPage() {
     const router = useRouter();
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const token = localStorage.getItem('token');
+    const { id } = useParams();
+    const [post, setPost] = useState<any>(null);
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     const adminID = token ? JSON.parse(atob(token.split('.')[1])).id : '';
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const [category, setCategory] = useState<string | null>(null);
+    const [location, setLocation] = useState<string | null>(null);
     const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
     const [uploading, setUploading] = useState<boolean>(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const isAdmin = checkIfUserIsAdmin();
-        if (!isAdmin) {
-            router.back();
+        if (post?.image) {
+            setSelectedImage(post.image);
+        }
+        if (post?.categoryID) {
+            setCategory(post.categoryID.categoryID);
+        }
+        if (post?.placeID) {
+            setLocation(post.placeID.placeID);
+        }
+        setValue('title', post?.title);
+        setValue('description', post?.itemDetail);
+        setValue('placedetail', post?.placeDetail);
+    }, [post]);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const isAdmin = checkIfUserIsAdmin();
+            if (!isAdmin) {
+                router.back();
+            }
         }
     }, []);
 
     const checkIfUserIsAdmin = () => {
-        const userRole = localStorage.getItem('role');
+        const userRole = typeof window !== 'undefined' ? localStorage.getItem('role') : null;
         return userRole === 'admin';
     };
 
-    const createPost = async (postData: FormData) => {
-        console.log(Array.from(postData.entries()));
+    useEffect(() => {
+        const fetchPost = async () => {
+            try {
+                const res = await AxiosLib.get(`/user-api/posts-id-get?id=${id}`);
+                setPost(res.data);
+                setLoading(false);
+            } catch (err) {
+                setError(error);
+                console.error("Error fetching post:", err);
+                setLoading(false);
+            }
+        }
+        if (id) {
+            fetchPost();
+        }
+    }, [id]);
+
+    const updatePost = async (postData: FormData) => {
         try {
-            const response = await AxiosLib.post("/user-api/posts-add", postData, {
+            const response = await AxiosLib.put(`/user-api/posts-id-mod?id=${id}`, postData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            console.log("Create post response:", response);
+            if (response.status === 200) {
+                router.push('/admin');
+            }
             return response.data;
         } catch (error) {
-            console.error("Create post error:", error);
-            throw new Error("Failed to create post");
+            console.error("Update post error:", error);
+            throw new Error("Failed to update post");
         }
     };
 
-    const onSubmit = async (data : any) => {
+    const onSubmit = async (data: any) => {
+        setLoading(true);
         const postData = new FormData();
         postData.append('categoryID', data.category);
         postData.append('placeID', data.location);
@@ -54,24 +96,19 @@ export default function CreatePostPage() {
         postData.append('placeDetail', data.placedetail);
         if (selectedImage) {
             postData.append('image', selectedImage);
-            console.log(selectedImage);
         }
-        console.log("Form data:", data);
-        console.log("FormData entries:", Array.from(postData.entries()));
-    
+        console.log("PostData entries:", Array.from(postData.entries()));
         try {
-            const createdPost = await createPost(postData);
-            console.log("Created post:", createdPost);
-            router.push('/admin');
+            const updatedPost = await updatePost(postData);
+            setLoading(false);
         } catch (error) {
-            console.error("Failed to create post:", error);
+            console.error("Failed to update post:", error);
+            setLoading(false);
         }
     };
-    
 
-    
     const handleFileClick = () => {
-        const fileInput = document.getElementById('fileInput');
+        const fileInput = document.getElementById('fileInput') as HTMLInputElement | null;
         if (fileInput) {
             fileInput.click();
         }
@@ -83,7 +120,6 @@ export default function CreatePostPage() {
             setSelectedImage(file);
             setUploadedImageUrl(URL.createObjectURL(file));
         }
-        console.log(file)
     };
 
     const locations = [
@@ -124,7 +160,6 @@ export default function CreatePostPage() {
         { value: 34, name: "(S15) อาคารภาควิชาวิศวกรรมเคมี" }
     ];
 
-
     const locationOptions = locations.map((location, index) => (
         <option key={index} value={index}>{location.name}</option>
     ));
@@ -136,15 +171,15 @@ export default function CreatePostPage() {
             <Navbar />
             <div className="w-full min-h-screen">
                 <div className="flex justify-center p-10">
-                    <h1 className="text-6xl font-bold">Create Post</h1>
+                    <h1 className="text-6xl font-bold">Update Post</h1>
                 </div>
                 <div className="flex justify-center items-start w-full min-h-screen p-10">
                     <div className="bg-white shadow-lg rounded-lg w-full max-w-4xl p-8 flex flex-col md:flex-row">
                         <div className="bg-gray-100 w-full md:w-1/2 flex justify-center items-center p-4 mb-6 md:mb-0 md:mr-6 rounded-lg">
                             <div className="w-3/4">
-                                {!uploadedImageUrl && (
+                                {!uploadedImageUrl && !selectedImage && !post?.image && (
                                     <div
-                                        className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 p-10 text-center rounded-lg cursor-pointer"
+                                        className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 p-10 text-center rounded-lg cursor-pointer relative"
                                         onClick={handleFileClick}
                                     >
                                         <IoCloudUploadOutline className="w-16 h-16 text-gray-500 mb-4" />
@@ -159,9 +194,23 @@ export default function CreatePostPage() {
                                         />
                                     </div>
                                 )}
-                                {uploadedImageUrl && (
-                                    <div className="mt-4">
-                                        <img src={uploadedImageUrl} alt="Uploaded" className="w-full h-auto object-cover rounded-lg" />
+                                {(uploadedImageUrl || selectedImage || post?.image) && (
+                                    <div className="mt-4 relative">
+                                        <img
+                                            src={uploadedImageUrl || (post && post.image)}
+                                            alt="Uploaded"
+                                            className="w-full h-auto object-cover rounded-lg"
+                                        />
+                                        <button
+                                            className="absolute top-0 right-0 mr-2 mt-2 bg-red-500 text-white px-2 py-1 rounded-full"
+                                            onClick={() => {
+                                                setUploadedImageUrl(null);
+                                                setSelectedImage(null);
+                                                setPost((prevState: typeof post) => ({ ...prevState, image: null }));
+                                            }}
+                                        >
+                                            Delete
+                                        </button>
                                     </div>
                                 )}
                             </div>
@@ -173,6 +222,7 @@ export default function CreatePostPage() {
                                     <input
                                         type="text"
                                         id="title"
+                                        defaultValue={post?.title}
                                         {...register('title', { required: true })}
                                         className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:border-blue-500"
                                     />
@@ -182,6 +232,7 @@ export default function CreatePostPage() {
                                     <label htmlFor="category" className="block text-gray-700 font-medium">Category</label>
                                     <select
                                         id="category"
+                                        defaultValue={post?.categoryID?.categoryID}
                                         {...register('category', { required: true })}
                                         className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:border-blue-500"
                                     >
@@ -213,6 +264,7 @@ export default function CreatePostPage() {
                                     <label htmlFor="location" className="block text-gray-700 font-medium">Location</label>
                                     <select
                                         id="location"
+                                        defaultValue={post ? locations.findIndex(location => location.value === post?.placeID?.placeID) : ''}
                                         {...register('location', { required: true })}
                                         className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:border-blue-500"
                                     >
@@ -224,9 +276,10 @@ export default function CreatePostPage() {
                                     <label htmlFor="placedetail" className="block text-gray-700 font-medium">Place Detail</label>
                                     <textarea
                                         id="placedetail"
+                                        defaultValue={post?.placeDetail}
                                         {...register('placedetail', { required: true })}
                                         className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:border-blue-500"
-                                        minLength={20}
+                                        minLength={100}
                                         maxLength={250}
                                     />
                                     {errors.placedetail && <span className="text-red-500">Place Detail is required</span>}
@@ -235,23 +288,26 @@ export default function CreatePostPage() {
                                     <label htmlFor="description" className="block text-gray-700 font-medium">Description</label>
                                     <textarea
                                         id="description"
+                                        defaultValue={post?.itemDetail}
                                         {...register('description', { required: true })}
                                         className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:border-blue-500"
-                                        minLength={20}
+                                        minLength={100}
                                         maxLength={500}
                                     />
-
                                     {errors.description && <span className="text-red-500">Description is required</span>}
                                 </div>
                                 <div className="flex justify-center gap-4">
-                                    <button type="submit"
-                                        className="bg-blue-500 text-white p-2 rounded w-1/2">
-                                        Submit
+                                    <button
+                                        type="submit"
+                                        disabled={loading}
+                                        className="bg-blue-500 text-white p-2 rounded w-1/2"
+                                    >
+                                        {loading ? 'Updating...' : 'Update Post'}
                                     </button>
                                     <button
                                         onClick={(e) => {
                                             e.preventDefault();
-                                            router.push('/admin');;
+                                            router.push('/admin');
                                         }}
                                         className="text-gray-300 p-2 rounded w-1/2 border-2 border-gray-300">
                                         Cancel
@@ -261,7 +317,7 @@ export default function CreatePostPage() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     );
 }

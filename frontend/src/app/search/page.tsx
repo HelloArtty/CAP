@@ -37,6 +37,16 @@ export default function Post() {
     const [category, setCategory] = useState('');
     const [location, setLocation] = useState('');
     const [asc, setAsc] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const postsPerPage = 12;
+
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+
 
 
     const fetchData = async (searchQuery = '') => {
@@ -172,9 +182,10 @@ export default function Post() {
             <div className="bg-blue-light">
                 <Navbar />
                 <div className="container mx-auto pt-4">
-                    <div className="flex flex-wrap justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
+                    <div className="flex flex-wrap justify-center items-center mt-6 space-y-4 md:space-y-0 md:space-x-4">
                         <div className="w-full md:w-auto mb-4 md:mb-0">
-                            <form className="flex items-center w-full" onSubmit={handleSearch}>
+                            <form className="flex items-center w-full md:w-auto"
+                                onSubmit={handleSearch}>
                                 <input
                                     type="text"
                                     placeholder="Search"
@@ -184,9 +195,9 @@ export default function Post() {
                                 />
                             </form>
                         </div>
-                        <div className="w-full md:w-auto flex flex-wrap space-y-2 md:space-y-0 md:space-x-2">
+                        <div className="w-full md:w-auto text-gray-500 flex flex-wrap space-y-2 md:space-y-0 md:space-x-2">
                             <select
-                                className="w-full md:w-auto border p-2 rounded"
+                                className="w-full md:w-auto border border-gray-300  p-2 rounded"
                                 onChange={handleCategoryChange}
                                 value={category}
                             >
@@ -213,14 +224,14 @@ export default function Post() {
                                 <option value="19">iPad</option>
                             </select>
                             <select
-                                className="w-full md:w-auto border p-2 rounded "
+                                className="w-full md:w-auto border border-gray-300 p-2 rounded "
                                 onChange={handleLocationChange}
                                 value={location}
                             >
                                 {locationOptions}
                             </select>
                             <select
-                                className="w-full md:w-auto border p-2 rounded"
+                                className="w-full md:w-auto border border-gray-300 p-2 rounded"
                                 onChange={handleSortChange}
                                 value={asc.toString()}
                             >
@@ -242,13 +253,22 @@ export default function Post() {
                             posts.length === 0 ? (
                                 <p className="text-xl font-semibold text-slate-700">No posts found!</p>
                             ) : (
-                                posts.map((post) => (
+                                currentPosts.map((post) => (
                                     <PostList key={post.id} post={post} />
                                 ))
                             )
                         )}
                     </div>
                 </div>
+                {posts.length > postsPerPage && (
+                    <div className="flex justify-center mt-4">
+                        {[...Array(Math.ceil(posts.length / postsPerPage))].map((_, index) => (
+                            <button key={index} onClick={() => paginate(index + 1)} className="mx-1 px-3 py-1 rounded bg-blue-500 text-white">
+                                {index + 1}
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
         </>
     );
