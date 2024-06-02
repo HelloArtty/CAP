@@ -46,7 +46,8 @@ def predict(partial_img_url):
         #categories = predictions[:, 5] # ?
         
         # show detection bounding boxes on image
-        results.show()
+        
+        #results.show()
         
         # save results into "results/" folder
         #results.save(save_dir='results/')
