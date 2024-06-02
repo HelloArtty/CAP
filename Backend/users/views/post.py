@@ -85,7 +85,7 @@ def update_delete_post_by_id(req):
         return Response("Post ID not found", status=status.HTTP_404_NOT_FOUND)
     
     if req.method == 'PUT':
-        if req.FILES['image']:
+        if bool(req.FILES.get('image', False)):
             imgPublicID = post_query.image.split('/')[-1].split('.')[0] 
             cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload") # delete old image from cloudinary
             
