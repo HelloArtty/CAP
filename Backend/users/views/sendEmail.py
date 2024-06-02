@@ -18,7 +18,7 @@ def send_email(req):
         email = EmailMessage(
             subject=req.data["subject"],
             body=req.data["body"],
-            from_email=[env('official_email')],
+            from_email=req.data["from_email"],
             to=[env('official_email')],
         )
 
