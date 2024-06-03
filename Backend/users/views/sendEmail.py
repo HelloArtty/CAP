@@ -1,10 +1,8 @@
-from django.core.mail import EmailMessage
-
-from rest_framework.decorators import api_view 
-from rest_framework.response import Response
-from rest_framework import status
-
 import environ
+from django.core.mail import EmailMessage
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 env = environ.Env()
 
@@ -13,12 +11,12 @@ def send_email(req):
     try:
         # Get the image file from the request
         image_file = req.FILES['image']
-
+        
         # Create an email message
         email = EmailMessage(
             subject=req.data["subject"],
             body=req.data["body"],
-            from_email=[env('official_email')],
+            from_email=req.data['from_email'],
             to=[env('official_email')],
         )
 
