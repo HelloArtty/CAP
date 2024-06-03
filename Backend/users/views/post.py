@@ -93,7 +93,7 @@ def update_delete_post_by_id(req):
             img_path = upload_result['secure_url'] # get full image url
             req.data['image'] = img_path
         
-        serializer = PostSerializer(data=req.data) # .save() will update the existing `post` instance. / partial=True allows partial update in serializer
+        serializer = PostSerializer(post_query,data=req.data,partial=True) # .save() will update the existing `post` instance. / partial=True allows partial update in serializer
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
