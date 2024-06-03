@@ -4,11 +4,12 @@ import AxiosLib from '@/app/lib/axiosInstance';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { faCamera, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function Home() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -47,13 +48,22 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [])
+
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Search form submitted:", e.currentTarget);
+    setIsLoading(true);
     const inputElement = e.currentTarget[0] as HTMLInputElement;
     const searchTerm = inputElement.value;
-    console.log("Search initiated:", searchTerm);
     window.location.href = `/search?search=${encodeURIComponent(searchTerm)}`;
+    setTimeout(() => {
+      setIsLoading(false);
+  }, 1000);
   };
 
 
