@@ -8,8 +8,9 @@ import { IoCloudUploadOutline } from 'react-icons/io5';
 
 const EmailForm = () => {
     const { id } = useParams();
+    const name = localStorage.getItem('username');
     const [post, setPost] = useState<any>(null);
-    const subject = `A request from postID = ${id}`;
+    const subject = `A request from ${name}`;
     const [body, setBody] = useState('');
     const [fromEmail, setFromEmail] = useState('');
     const [image, setImage] = useState<File | null>(null);
@@ -56,7 +57,7 @@ const EmailForm = () => {
 
         const formData = new FormData();
         formData.append('subject', subject);
-        formData.append('body', `Link: http://localhost:3000/post/${id}\nFrom: ${fromEmail}\n${body}`);
+        formData.append('body', `postID = ${id}\nLink: http://localhost:3000/post/${id}\nFrom: ${fromEmail}\n${body}`);
         formData.append('from_email', fromEmail);
         formData.append('image', image);
         console.log("FormData entries:", Array.from(formData.entries()));

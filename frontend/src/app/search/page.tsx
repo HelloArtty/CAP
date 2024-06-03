@@ -3,6 +3,7 @@
 import AxiosLib from "@/app/lib/axiosInstance";
 import PostList from "@/app/search/PostList";
 import { updateURLParams } from "@/app/utils/utils";
+import Footer from '@/components/Footer/page';
 import LoadingPage from '@/components/Loading/page';
 import Navbar from '@/components/Navbar/page';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -52,15 +53,11 @@ export default function Post() {
         window.scrollTo(0, 0);
         setTimeout(() => {
             setIsLoading(false);
-        }, 1000); // 1000 เป็นตัวอย่างเวลาที่ใช้ในการโหลด (ให้ปรับให้เป็นเวลาจริง)
+        }, 1250);
     };
 
-
-
-
-
     const fetchData = async (searchQuery = '') => {
-        setLoading(true);
+        setIsLoading(true);
         setError(null);
         try {
             const data = searchQuery ? await getFilterPosts(searchQuery) : await getPosts();
@@ -68,12 +65,16 @@ export default function Post() {
         } catch (err) {
             setError(error);
         } finally {
-            setLoading(false);
+            setTimeout(() => {
+                setIsLoading(false);
+                setLoading(false);
+            }, 1250);
         }
     };
 
 
     useEffect(() => {
+
         const params = new URLSearchParams(window.location.search);
         const searchTermParam = params.get('search') || '';
         const categoryParam = params.get('category') || '';
@@ -136,6 +137,7 @@ export default function Post() {
     };
 
     const locations = [
+        { value: '', name: "Select Location" },
         { value: 0, name: "(N1) อาคารศูนย์ต้อนรับ" },
         { value: 1, name: "(N2) อาคารสำนักงานอธิการบดี" },
         { value: 2, name: "(N3) อาคารภาควิชาเคมี" },
@@ -189,98 +191,106 @@ export default function Post() {
 
     return (
         <>
-            <div className="bg-blue-light">
-                <Navbar />
-                <div className="container mx-auto pt-4">
-                    <div className="flex flex-wrap justify-center items-center mt-6 space-y-4 md:space-y-0 md:space-x-4">
-                        <div className="w-full md:w-auto mb-4 md:mb-0">
-                            <form className="flex items-center w-full md:w-auto"
-                                onSubmit={handleSearch}>
-                                <input
-                                    type="text"
-                                    placeholder="Search"
-                                    className="flex-grow p-2 rounded-lg border border-gray-300 focus:outline-none"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
-                            </form>
-                        </div>
-                        <div className="w-full md:w-auto text-gray-500 flex flex-wrap space-y-2 md:space-y-0 md:space-x-2">
-                            <select
-                                className="w-full md:w-auto border border-gray-300  p-2 rounded"
-                                onChange={handleCategoryChange}
-                                value={category}
-                            >
-                                <option value="">Select Category</option>
-                                <option value="0">Apple Pencil</option>
-                                <option value="1">Bag</option>
-                                <option value="2">Calculator</option>
-                                <option value="3">Card</option>
-                                <option value="4">Cup</option>
-                                <option value="5">Earphone</option>
-                                <option value="6">Eyeglasses</option>
-                                <option value="7">Headphone</option>
-                                <option value="8">Helmet</option>
-                                <option value="9">Key</option>
-                                <option value="10">Laptop</option>
-                                <option value="11">Mouse</option>
-                                <option value="12">Passport</option>
-                                <option value="13">Pen</option>
-                                <option value="14">Phone</option>
-                                <option value="15">Sneaker</option>
-                                <option value="16">Umbrella</option>
-                                <option value="17">Watch</option>
-                                <option value="18">Water Bottle</option>
-                                <option value="19">iPad</option>
-                            </select>
-                            <select
-                                className="w-full md:w-auto border border-gray-300 p-2 rounded "
-                                onChange={handleLocationChange}
-                                value={location}
-                            >
-                                {locationOptions}
-                            </select>
-                            <select
-                                className="w-full md:w-auto border border-gray-300 p-2 rounded"
-                                onChange={handleSortChange}
-                                value={asc.toString()}
-                            >
-                                <option value="true">Latest</option>
-                                <option value="false">Oldest</option>
-                            </select>
-                            <button className="bg-blue-500 text-white py-2 px-4 rounded" onClick={handleSearchClick}>
-                                Search
-                            </button>
+            <div className="min-h-screen">
+                <div className="min-h-screen flex flex-col justify-between">
+                    <Navbar />
+                    <div className="container mx-auto pt-4 flex-grow">
+                        <div className="flex flex-wrap justify-center items-center mt-6 space-y-4 md:space-y-0 md:space-x-4">
+                            <div className="w-full md:w-auto mb-4 md:mb-0">
+                                <form className="flex items-center w-full md:w-auto" onSubmit={handleSearch}>
+                                    <input
+                                        type="text"
+                                        placeholder="Search"
+                                        className="flex-grow p-2 rounded-lg border border-gray-300 focus:outline-none"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </form>
+                            </div>
+                            <div className="w-full md:w-auto text-gray-500 flex flex-wrap space-y-2 md:space-y-0 md:space-x-2">
+                                <select
+                                    className="w-full md:w-auto border border-gray-300 p-2 rounded"
+                                    onChange={handleCategoryChange}
+                                    value={category}
+                                >
+                                    <option value="">Select Category</option>
+                                    <option value="0">Apple Pencil</option>
+                                    <option value="1">Bag</option>
+                                    <option value="2">Calculator</option>
+                                    <option value="3">Card</option>
+                                    <option value="4">Cup</option>
+                                    <option value="5">Earphone</option>
+                                    <option value="6">Eyeglasses</option>
+                                    <option value="7">Headphone</option>
+                                    <option value="8">Helmet</option>
+                                    <option value="9">Key</option>
+                                    <option value="10">Laptop</option>
+                                    <option value="11">Mouse</option>
+                                    <option value="12">Passport</option>
+                                    <option value="13">Pen</option>
+                                    <option value="14">Phone</option>
+                                    <option value="15">Sneaker</option>
+                                    <option value="16">Umbrella</option>
+                                    <option value="17">Watch</option>
+                                    <option value="18">Water Bottle</option>
+                                    <option value="19">iPad</option>
+                                </select>
+                                <select
+                                    className="w-full md:w-auto border border-gray-300 p-2 rounded"
+                                    onChange={handleLocationChange}
+                                    value={location}
+                                >
+                                    {locations.map((loc) => (
+                                        <option key={loc.value} value={loc.value}>{loc.name}</option>
+                                    ))}
+                                </select>
+                                <select
+                                    className="w-full md:w-auto border border-gray-300 p-2 rounded"
+                                    onChange={handleSortChange}
+                                    value={asc.toString()}
+                                >
+                                    <option value="true">Latest</option>
+                                    <option value="false">Oldest</option>
+                                </select>
+                                <button className="bg-blue-500 text-white py-2 px-4 rounded" onClick={handleSearchClick}>
+                                    Search
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                </div>
-                <div className="container mx-auto p-4 md:p-8">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {isLoading ? (
-                            <LoadingPage />
-                        ) : (
-                            posts.length === 0 ? (
-                                <p className="text-xl font-semibold text-slate-700">No posts found!</p>
+                    <div className="container mx-auto p-4 md:p-8 flex-grow">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {isLoading || loading ? (
+                                <LoadingPage />
                             ) : (
-                                currentPosts.map((post) => (
-                                    <PostList key={post.id} post={post} />
-                                ))
-                            )
+                                posts.length === 0 ? (
+                                    <p className="text-xl font-semibold text-slate-700">No posts found!</p>
+                                ) : (
+                                    currentPosts.map((post) => (
+                                        <PostList key={post.id} post={post} />
+                                    ))
+                                )
+                            )}
+                        </div>
+                    </div>
+                    <div className="mt-4 flex justify-center mb-8">
+                        {posts.length > postsPerPage && (
+                            <div className="flex flex-wrap space-x-1">
+                                {[...Array(Math.ceil(posts.length / postsPerPage))].map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => paginate(index + 1)}
+                                        className={`mx-1 px-3 py-1 rounded-lg font-semibold ${currentPage === index + 1 ? 'bg-blue-main text-white ' : 'bg-white text-blue-text hover:bg-blue-400 hover:text-white'
+                                            }`}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                ))}
+                            </div>
                         )}
                     </div>
-
+                    <Footer />
                 </div>
-
-                {posts.length > postsPerPage && (
-                    <div className="flex justify-center mt-4">
-                        {[...Array(Math.ceil(posts.length / postsPerPage))].map((_, index) => (
-                            <button key={index} onClick={() => paginate(index + 1)} className="mx-1 px-3 py-1 rounded bg-blue-500 text-white">
-                                {index + 1}
-                            </button>
-                        ))}
-                    </div>
-                )}
             </div>
         </>
     );

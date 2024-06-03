@@ -52,7 +52,7 @@ export default function Login() {
           console.log(res.data.username);
           console.log(res.data.role);
           console.log(res);
-          router.push('/search');
+          router.back();
         }
       });
     } catch (error) {

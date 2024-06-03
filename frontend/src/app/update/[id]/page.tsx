@@ -15,10 +15,7 @@ export default function UpdatePostPage() {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     const adminID = token ? JSON.parse(atob(token.split('.')[1])).id : '';
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
-    const [category, setCategory] = useState<string | null>(null);
-    const [location, setLocation] = useState<string | null>(null);
     const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
-    const [uploading, setUploading] = useState<boolean>(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -26,10 +23,14 @@ export default function UpdatePostPage() {
         if (post?.image) {
             setSelectedImage(post.image);
         }
-        setValue('title', post?.title);
-        setValue('description', post?.itemDetail);
-        setValue('placedetail', post?.placeDetail);
-    }, [post]);
+        if (post) {
+            setValue('title', post.title);
+            setValue('description', post.itemDetail);
+            setValue('placedetail', post.placeDetail);
+            setValue('category', post.categoryID?.categoryID);
+            setValue('location', post.placeID?.placeID);
+        }
+    }, [post, setValue]);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -56,7 +57,7 @@ export default function UpdatePostPage() {
                 console.error("Error fetching post:", err);
                 setLoading(false);
             }
-        }
+        };
         if (id) {
             fetchPost();
         }
@@ -91,9 +92,8 @@ export default function UpdatePostPage() {
         if (selectedImage) {
             postData.append('image', selectedImage);
         }
-        console.log("PostData entries:", Array.from(postData.entries()));
         try {
-            const updatedPost = await updatePost(postData);
+            await updatePost(postData);
             setLoading(false);
         } catch (error) {
             console.error("Failed to update post:", error);
@@ -154,11 +154,9 @@ export default function UpdatePostPage() {
         { value: 34, name: "(S15) อาคารภาควิชาวิศวกรรมเคมี" }
     ];
 
-    const locationOptions = locations.map((location, index) => (
-        <option key={index} value={index}>{location.name}</option>
+    const locationOptions = locations.map((location) => (
+        <option key={location.value} value={location.value}>{location.name}</option>
     ));
-
-    locationOptions.unshift(<option key="default" value="">Select Location</option>);
 
     return (
         <>
@@ -273,7 +271,7 @@ export default function UpdatePostPage() {
                                         defaultValue={post?.placeDetail}
                                         {...register('placedetail', { required: true })}
                                         className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:border-blue-500"
-                                        minLength={100}
+                                        minLength={20}
                                         maxLength={250}
                                     />
                                     {errors.placedetail && <span className="text-red-500">Place Detail is required</span>}
@@ -285,7 +283,7 @@ export default function UpdatePostPage() {
                                         defaultValue={post?.itemDetail}
                                         {...register('description', { required: true })}
                                         className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:border-blue-500"
-                                        minLength={100}
+                                        minLength={20}
                                         maxLength={500}
                                     />
                                     {errors.description && <span className="text-red-500">Description is required</span>}
@@ -301,7 +299,7 @@ export default function UpdatePostPage() {
                                     <button
                                         onClick={(e) => {
                                             e.preventDefault();
-                                            router.push('/admin');
+                                            router.back();
                                         }}
                                         className="text-gray-300 p-2 rounded w-1/2 border-2 border-gray-300">
                                         Cancel

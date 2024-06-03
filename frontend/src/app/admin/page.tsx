@@ -69,7 +69,7 @@ export default function Admin() {
                     <div className="flex justify-center p-10 ">
                         <div className="w-full overflow-x-auto shadow-2xl">
                             <Table hoverable>
-                                <Table.Head className="">
+                                <Table.Head>
                                     <Table.HeadCell>Photo</Table.HeadCell>
                                     <Table.HeadCell>Name</Table.HeadCell>
                                     <Table.HeadCell>Category</Table.HeadCell>
