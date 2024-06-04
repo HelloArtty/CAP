@@ -85,15 +85,17 @@ def update_delete_post_by_id(req):
         return Response("Post ID not found", status=status.HTTP_404_NOT_FOUND)
     
     if req.method == 'PUT':
+        post_data = req.data.copy()  # Create a copy of the request data
+        
         if bool(req.FILES.get('image', False)):
             imgPublicID = post_query.image.split('/')[-1].split('.')[0] 
             cloudinary.api.delete_resources(imgPublicID, resource_type="image", type="upload") # delete old image from cloudinary
             
             upload_result = cloudinary.uploader.upload(req.FILES['image'])
             img_path = upload_result['secure_url'] # get full image url
-            req.data['image'] = img_path
+            post_data['image'] = img_path
         
-        serializer = PostSerializer(post_query,data=req.data,partial=True) # .save() will update the existing `post` instance. / partial=True allows partial update in serializer
+        serializer = PostSerializer(post_query,data=post_data,partial=True) # .save() will update the existing `post` instance. / partial=True allows partial update in serializer
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
