@@ -39,5 +39,3 @@ jwt>=0.0.1,<1.3.1
 
 # Install PyJWT for token generation
 PyJWT>=0.1.1,<2.8.0
-
-#หีควยแตด
